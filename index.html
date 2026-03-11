@@ -216,6 +216,7 @@ tr:hover td{background:var(--bg-hover)}
     <button data-panel="revenue"><span class="icon">💰</span><span>Revenue</span></button>
     <button data-panel="api"><span class="icon">🌐</span><span>Live Data</span></button>
     <button data-panel="tasks"><span class="icon">📋</span><span>Tasks</span></button>
+    <button data-panel="strategy"><span class="icon">🎯</span><span>Strategy</span></button>
   </nav>
   <div class="sidebar-footer">v2.0 Pro &bull; Houston, TX</div>
 </aside>
@@ -503,6 +504,185 @@ tr:hover td{background:var(--bg-hover)}
         </div>
       </div>
       <div class="kanban" id="kanban"></div>
+    </div>
+
+    <!-- STRATEGY & PLAN -->
+    <div class="panel" id="panel-strategy">
+      <div class="panel-section">
+        <div class="panel-header"><h3>📋 Master Plan — Longer Industries</h3></div>
+        <div style="padding:18px">
+          <div style="background:var(--accent-glow);border:1px solid var(--accent);border-radius:var(--radius);padding:16px;margin-bottom:20px">
+            <h4 style="color:var(--accent);margin-bottom:8px">🎯 Executive Summary</h4>
+            <p style="color:var(--text-secondary);font-size:.85rem">Multi-pronged income strategy targeting <strong style="color:var(--text-primary)">$14,000-17,000/month</strong> within 90 days through simultaneous job applications, expert network consulting, deal brokerage, and digital products. Success probability: <strong style="color:var(--success)">85-95%</strong> based on existing expertise and relationships.</p>
+          </div>
+
+          <h4 style="color:var(--accent);margin-bottom:12px">📈 Revenue Timeline</h4>
+          <table style="width:100%;margin-bottom:24px"><thead><tr><th>Phase</th><th>Timeline</th><th>Target</th><th>Primary Sources</th></tr></thead><tbody>
+            <tr><td><strong>Emergency Proof</strong></td><td>Days 1-14</td><td style="color:var(--success)">$9,000</td><td>Expert network calls, crisis consulting, asset liquidation</td></tr>
+            <tr><td><strong>Stabilization</strong></td><td>Month 1</td><td style="color:var(--success)">$14,000/mo</td><td>Consulting retainers + expert networks + first job offers</td></tr>
+            <tr><td><strong>Growth</strong></td><td>Months 2-3</td><td style="color:var(--success)">$17,000/mo</td><td>Salary (if hired) + consulting + brokerage commissions</td></tr>
+            <tr><td><strong>Empire</strong></td><td>Months 4-12</td><td style="color:var(--success)">$250K+/year</td><td>Full salary + multiple revenue streams</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-header"><h3>💼 Job Application Tracker</h3></div>
+        <div class="table-wrap">
+          <table><thead><tr><th>Company</th><th>Role</th><th>Salary Range</th><th>Location</th><th>Status</th><th>Priority</th></tr></thead><tbody>
+            <tr><td><strong>SpaceX</strong></td><td>Sr. Channel Sales Manager</td><td style="color:var(--success)">$150K-220K</td><td>Bastrop, TX</td><td><span style="color:var(--warning)">Cover Letter Ready</span></td><td><span style="background:var(--danger);color:#fff;padding:2px 8px;border-radius:3px;font-size:.75rem">HIGH</span></td></tr>
+            <tr><td><strong>CrowdStrike</strong></td><td>Regional Sales Manager</td><td style="color:var(--success)">$250K-350K OTE</td><td>Remote (TX)</td><td><span style="color:var(--warning)">Application Ready</span></td><td><span style="background:var(--danger);color:#fff;padding:2px 8px;border-radius:3px;font-size:.75rem">HIGH</span></td></tr>
+            <tr><td><strong>Salesforce</strong></td><td>Enterprise Account Executive</td><td style="color:var(--success)">$150K-280K OTE</td><td>Houston/Remote</td><td><span style="color:var(--warning)">Application Ready</span></td><td><span style="background:var(--danger);color:#fff;padding:2px 8px;border-radius:3px;font-size:.75rem">HIGH</span></td></tr>
+            <tr><td><strong>ServiceNow</strong></td><td>Account Executive</td><td style="color:var(--success)">$160K-280K OTE</td><td>Remote</td><td><span style="color:var(--warning)">Application Ready</span></td><td><span style="background:var(--danger);color:#fff;padding:2px 8px;border-radius:3px;font-size:.75rem">HIGH</span></td></tr>
+            <tr><td><strong>Microsoft</strong></td><td>Enterprise Sales Specialist</td><td style="color:var(--success)">$180K-300K+</td><td>Houston/Remote</td><td><span style="color:var(--warning)">Application Ready</span></td><td><span style="background:var(--danger);color:#fff;padding:2px 8px;border-radius:3px;font-size:.75rem">HIGH</span></td></tr>
+            <tr><td><strong>AWS</strong></td><td>Account Executive</td><td style="color:var(--success)">$190K-320K+</td><td>Houston/Remote</td><td><span style="color:var(--warning)">Application Ready</span></td><td><span style="background:var(--danger);color:#fff;padding:2px 8px;border-radius:3px;font-size:.75rem">HIGH</span></td></tr>
+            <tr><td><strong>SLB</strong></td><td>Commercial Director</td><td style="color:var(--success)">$150K-200K+</td><td>Houston (HQ)</td><td><span style="color:var(--info)">Researching</span></td><td><span style="background:var(--warning);color:#000;padding:2px 8px;border-radius:3px;font-size:.75rem">MED</span></td></tr>
+            <tr><td><strong>Baker Hughes</strong></td><td>Sales Director</td><td style="color:var(--success)">$140K-220K+</td><td>Houston (HQ)</td><td><span style="color:var(--info)">Researching</span></td><td><span style="background:var(--warning);color:#000;padding:2px 8px;border-radius:3px;font-size:.75rem">MED</span></td></tr>
+            <tr><td><strong>Flowserve</strong></td><td>Regional Sales Director</td><td style="color:var(--success)">$160K-280K</td><td>Irving, TX</td><td><span style="color:var(--info)">Direct Fit — Valve Expertise</span></td><td><span style="background:var(--danger);color:#fff;padding:2px 8px;border-radius:3px;font-size:.75rem">HIGH</span></td></tr>
+            <tr><td><strong>NOV</strong></td><td>Sales Director</td><td style="color:var(--success)">$140K-200K</td><td>Houston (HQ)</td><td><span style="color:var(--info)">Researching</span></td><td><span style="background:var(--warning);color:#000;padding:2px 8px;border-radius:3px;font-size:.75rem">MED</span></td></tr>
+            <tr><td><strong>L3Harris</strong></td><td>Director, International BD</td><td style="color:var(--success)">$152K-325K</td><td>Arlington, VA / Remote</td><td><span style="color:var(--warning)">Application Ready</span></td><td><span style="background:var(--danger);color:#fff;padding:2px 8px;border-radius:3px;font-size:.75rem">HIGH</span></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-header"><h3>💰 Revenue Streams</h3></div>
+        <div style="padding:18px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+            <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+              <h4 style="color:var(--accent);margin-bottom:8px">🧠 Expert Networks</h4>
+              <p style="font-size:.8rem;color:var(--text-secondary)"><strong>GLG, AlphaSights, Guidepoint</strong></p>
+              <p style="font-size:.8rem;color:var(--text-secondary)">Rate: $400-500/hour • Timeline: 2-4 weeks</p>
+              <p style="font-size:.8rem;color:var(--success)">Potential: $8,000-15,000/month (20-30 hrs)</p>
+              <p style="font-size:.75rem;color:var(--warning);margin-top:6px">Status: Applications submitted, awaiting approval</p>
+            </div>
+            <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+              <h4 style="color:var(--accent);margin-bottom:8px">🔧 Crisis Consulting</h4>
+              <p style="font-size:.8rem;color:var(--text-secondary)"><strong>Manufacturing & Defense Crisis Resolution</strong></p>
+              <p style="font-size:.8rem;color:var(--text-secondary)">Rate: $5,000/package (48-hr delivery)</p>
+              <p style="font-size:.8rem;color:var(--success)">Potential: $10,000-15,000/month (2-3 packages)</p>
+              <p style="font-size:.75rem;color:var(--warning);margin-top:6px">Status: Email outreach launching this week</p>
+            </div>
+            <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+              <h4 style="color:var(--accent);margin-bottom:8px">🤝 Deal Brokerage</h4>
+              <p style="font-size:.8rem;color:var(--text-secondary)"><strong>Equipment, Machinery & Defense Surplus</strong></p>
+              <p style="font-size:.8rem;color:var(--text-secondary)">Rate: 6-8% commission per deal</p>
+              <p style="font-size:.8rem;color:var(--success)">Potential: $5,000-20,000/month</p>
+              <p style="font-size:.75rem;color:var(--info);margin-top:6px">Status: Platform live, loading contacts</p>
+            </div>
+            <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+              <h4 style="color:var(--accent);margin-bottom:8px">📱 Twitter/Content</h4>
+              <p style="font-size:.8rem;color:var(--text-secondary)"><strong>Defense/Industrial Thought Leadership</strong></p>
+              <p style="font-size:.8rem;color:var(--text-secondary)">Revenue: Ad sharing + consulting leads</p>
+              <p style="font-size:.8rem;color:var(--success)">Potential: $3,000-12,000/month (at scale)</p>
+              <p style="font-size:.75rem;color:var(--info);margin-top:6px">Status: Strategy complete, launching this week</p>
+            </div>
+            <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+              <h4 style="color:var(--accent);margin-bottom:8px">📦 Asset Liquidation</h4>
+              <p style="font-size:.8rem;color:var(--text-secondary)"><strong>American Munitions Equipment & Inventory</strong></p>
+              <p style="font-size:.8rem;color:var(--text-secondary)">One-time cash: $35,000-50,000</p>
+              <p style="font-size:.8rem;color:var(--success)">Timeline: 2-6 weeks for full liquidation</p>
+              <p style="font-size:.75rem;color:var(--warning);margin-top:6px">Status: Inventory assessment needed</p>
+            </div>
+            <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+              <h4 style="color:var(--accent);margin-bottom:8px">📚 Digital Products</h4>
+              <p style="font-size:.8rem;color:var(--text-secondary)"><strong>Guides, Courses & Info Products</strong></p>
+              <p style="font-size:.8rem;color:var(--text-secondary)">Price: $197-2,997 per product</p>
+              <p style="font-size:.8rem;color:var(--success)">Potential: $2,000-8,000/month (passive)</p>
+              <p style="font-size:.75rem;color:var(--info);margin-top:6px">Status: Content outlines ready</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-header"><h3>⚖️ GCDL Defense Situation</h3></div>
+        <div style="padding:18px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div>
+              <h4 style="color:var(--text-primary);margin-bottom:8px">Current Position</h4>
+              <ul style="font-size:.85rem;color:var(--text-secondary);list-style:disc;padding-left:20px;line-height:1.8">
+                <li>10% equity holder in GCDL Defense</li>
+                <li>Partners offering buyout at 30¢ on the dollar</li>
+                <li>Operating agreement requires unanimous board vote for major decisions</li>
+                <li><strong style="color:var(--danger)">DO NOT sign at current offer</strong></li>
+              </ul>
+            </div>
+            <div>
+              <h4 style="color:var(--text-primary);margin-bottom:8px">Negotiation Strategy</h4>
+              <ul style="font-size:.85rem;color:var(--text-secondary);list-style:disc;padding-left:20px;line-height:1.8">
+                <li>Target: 65-75¢ on the dollar</li>
+                <li>Minimum acceptable: 50¢ on the dollar</li>
+                <li>Leverage: Board vote requirement, operational knowledge</li>
+                <li>Timeline: 60-day resolution target</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-header"><h3>💎 Financial Targets & Milestones</h3></div>
+        <div style="padding:18px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px">
+            <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center">
+              <div style="font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px">14-Day Target</div>
+              <div style="font-size:1.5rem;font-weight:700;color:var(--accent);margin:8px 0">$9,000</div>
+              <div style="font-size:.75rem;color:var(--text-secondary)">Proof of concept cash</div>
+            </div>
+            <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center">
+              <div style="font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px">Monthly Need</div>
+              <div style="font-size:1.5rem;font-weight:700;color:var(--warning);margin:8px 0">$14,000</div>
+              <div style="font-size:.75rem;color:var(--text-secondary)">Mortgage, bills, school</div>
+            </div>
+            <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center">
+              <div style="font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px">St. Francis</div>
+              <div style="font-size:1.5rem;font-weight:700;color:var(--info);margin:8px 0">$2,500/mo</div>
+              <div style="font-size:.75rem;color:var(--text-secondary)">Starting August 2026</div>
+            </div>
+            <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center">
+              <div style="font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px">Full Target</div>
+              <div style="font-size:1.5rem;font-weight:700;color:var(--danger);margin:8px 0">$17,000/mo</div>
+              <div style="font-size:.75rem;color:var(--text-secondary)">Including activities & uniforms</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-header"><h3>🛡️ Contingency Planning</h3></div>
+        <div style="padding:18px">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+            <div style="background:var(--bg-secondary);border:1px solid var(--success);border-radius:var(--radius);padding:16px">
+              <h4 style="color:var(--success);margin-bottom:8px">Best Case (Day 7-14)</h4>
+              <ul style="font-size:.8rem;color:var(--text-secondary);list-style:disc;padding-left:16px;line-height:1.8">
+                <li>Expert network approved fast</li>
+                <li>1-2 crisis consulting clients close</li>
+                <li>$9K+ cash in bank</li>
+                <li>Multiple job interviews scheduled</li>
+              </ul>
+            </div>
+            <div style="background:var(--bg-secondary);border:1px solid var(--warning);border-radius:var(--radius);padding:16px">
+              <h4 style="color:var(--warning);margin-bottom:8px">Realistic Case (Day 30)</h4>
+              <ul style="font-size:.8rem;color:var(--text-secondary);list-style:disc;padding-left:16px;line-height:1.8">
+                <li>Expert networks generating $5K+/mo</li>
+                <li>Job offers in negotiation stage</li>
+                <li>Brokerage deals in pipeline</li>
+                <li>$14K/mo run rate established</li>
+              </ul>
+            </div>
+            <div style="background:var(--bg-secondary);border:1px solid var(--danger);border-radius:var(--radius);padding:16px">
+              <h4 style="color:var(--danger);margin-bottom:8px">Worst Case (Day 60)</h4>
+              <ul style="font-size:.8rem;color:var(--text-secondary);list-style:disc;padding-left:16px;line-height:1.8">
+                <li>Accept best available job offer</li>
+                <li>GCDL buyout at 50¢ minimum</li>
+                <li>Asset liquidation for bridge cash</li>
+                <li>Reduce expenses where possible</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
