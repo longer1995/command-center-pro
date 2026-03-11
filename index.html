@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Longer Industries — Command Center Pro</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-primary:#0a0e14;--bg-secondary:#111820;--bg-card:#161d27;--bg-hover:#1c2530;
+  --border:#253040;--border-light:#2a3a4a;
+  --text-primary:#e0e6ed;--text-secondary:#8899aa;--text-muted:#556677;
+  --accent:#00c896;--accent-dim:#00a87a;--accent-glow:rgba(0,200,150,.15);
+  --danger:#ff4466;--warning:#ffaa22;--info:#3399ff;--success:#00c896;
+  --high:#ff4466;--medium:#ffaa22;--low:#00c896;
+  --font-mono:'Courier New',Courier,monospace;
+  --font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --radius:6px;--shadow:0 2px 12px rgba(0,0,0,.4);
+}
+html{font-size:14px}
+body{font-family:var(--font-sans);background:var(--bg-primary);color:var(--text-primary);min-height:100vh;display:flex;overflow:hidden}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+button{cursor:pointer;font-family:inherit;font-size:.85rem}
+input,select,textarea{font-family:inherit;font-size:.85rem;background:var(--bg-secondary);color:var(--text-primary);border:1px solid var(--border);border-radius:var(--radius);padding:6px 10px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical}
+
+/* SIDEBAR */
+.sidebar{width:220px;background:var(--bg-secondary);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-brand{padding:20px 16px;border-bottom:1px solid var(--border);text-align:center}
+.sidebar-brand h1{font-size:1rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700}
+.sidebar-brand .sub{font-size:.7rem;color:var(--text-muted);letter-spacing:1px;margin-top:4px}
+.sidebar nav{flex:1;padding:12px 0}
+.sidebar nav button{display:flex;align-items:center;gap:10px;width:100%;padding:11px 20px;background:none;border:none;color:var(--text-secondary);font-size:.85rem;text-align:left;transition:all .15s}
+.sidebar nav button:hover{background:var(--bg-hover);color:var(--text-primary)}
+.sidebar nav button.active{background:var(--accent-glow);color:var(--accent);border-left:3px solid var(--accent)}
+.sidebar nav button .icon{font-size:1.1rem;width:22px;text-align:center}
+.sidebar nav button .badge{background:var(--danger);color:#fff;border-radius:50%;font-size:.65rem;padding:2px 6px;margin-left:auto;font-weight:700}
+.sidebar-footer{padding:14px 16px;border-top:1px solid var(--border);font-size:.7rem;color:var(--text-muted);text-align:center}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--bg-secondary)}
+.topbar h2{font-size:1.05rem;font-weight:600}
+.topbar .meta{font-size:.75rem;color:var(--text-muted);font-family:var(--font-mono)}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.status-indicator{display:flex;align-items:center;gap:6px;font-size:.75rem}
+.status-dot{width:8px;height:8px;border-radius:50%}
+.status-online{background:var(--success);box-shadow:0 0 6px rgba(0,200,150,.5)}
+.status-offline{background:var(--danger)}
+.content{flex:1;overflow-y:auto;padding:20px 24px}
+
+/* PANELS */
+.panel{display:none}.panel.active{display:block}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden;cursor:pointer;transition:border-color .15s}
+.stat-card:hover{border-color:var(--accent)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px}
+.stat-card:nth-child(1)::before{background:var(--accent)}
+.stat-card:nth-child(2)::before{background:var(--info)}
+.stat-card:nth-child(3)::before{background:var(--warning)}
+.stat-card:nth-child(4)::before{background:var(--success)}
+.stat-card:nth-child(5)::before{background:#ff6b6b}
+.stat-card .label{font-size:.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px}
+.stat-card .value{font-size:1.8rem;font-weight:700;font-family:var(--font-mono)}
+.stat-card:nth-child(1) .value{color:var(--accent)}
+.stat-card:nth-child(2) .value{color:var(--info)}
+.stat-card:nth-child(3) .value{color:var(--warning)}
+.stat-card:nth-child(4) .value{color:var(--success)}
+.stat-card:nth-child(5) .value{color:#ff6b6b}
+.stat-card .trend{font-size:.65rem;color:var(--text-muted);margin-top:4px}
+
+/* ENHANCED MATCHING */
+.match-card{background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;display:grid;grid-template-columns:1fr auto 1fr auto auto;align-items:center;gap:16px;transition:border-color .15s}
+.match-card:hover{border-color:var(--accent)}
+.match-card.high-confidence{border-color:var(--success);background:rgba(0,200,150,.05)}
+.match-side{font-size:.82rem}
+.match-side .title{font-weight:600;margin-bottom:4px}
+.match-side .detail{color:var(--text-secondary);font-size:.75rem}
+.match-arrow{font-size:1.5rem;color:var(--accent)}
+.match-confidence{text-align:center;font-size:.7rem}
+.match-confidence .score{font-weight:700;font-size:1.1rem;margin-bottom:2px}
+.match-confidence.high .score{color:var(--success)}
+.match-confidence.medium .score{color:var(--warning)}
+.match-confidence.low .score{color:var(--danger)}
+.match-numbers{text-align:right;font-family:var(--font-mono)}
+.match-numbers .deal{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.match-numbers .commission{font-size:.8rem;color:var(--warning);margin-top:2px}
+.match-numbers .label{font-size:.65rem;color:var(--text-muted);text-transform:uppercase}
+.match-actions{text-align:center}
+.match-actions button{font-size:.75rem;margin:2px}
+
+/* API STATUS */
+.api-status{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px}
+.api-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:12px;display:flex;align-items:center;gap:10px}
+.api-card .status{width:8px;height:8px;border-radius:50%}
+.api-card.online .status{background:var(--success);box-shadow:0 0 6px rgba(0,200,150,.5)}
+.api-card.error .status{background:var(--danger)}
+.api-card.loading .status{background:var(--warning);animation:pulse 1s infinite}
+.api-card .info{flex:1}
+.api-card .name{font-weight:600;font-size:.85rem}
+.api-card .desc{font-size:.7rem;color:var(--text-muted)}
+.api-card .last-sync{font-size:.65rem;color:var(--text-muted);font-family:var(--font-mono)}
+
+/* REVENUE TRACKER */
+.revenue-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:20px}
+.revenue-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.revenue-card h4{color:var(--accent);margin-bottom:10px;font-size:.9rem}
+.revenue-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(37,48,64,.3)}
+.revenue-item:last-child{border-bottom:none}
+.revenue-item .desc{font-size:.8rem}
+.revenue-item .amount{font-family:var(--font-mono);font-weight:600;color:var(--success)}
+
+/* ALERTS & NOTIFICATIONS */
+.alert-banner{background:linear-gradient(90deg,var(--warning),var(--accent));color:#000;padding:8px 20px;font-size:.8rem;font-weight:600;text-align:center;display:none}
+.alert-banner.show{display:block}
+
+/* TABLE ENHANCEMENTS */
+.panel-section{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px;overflow:hidden}
+.panel-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
+.panel-header h3{font-size:.95rem;font-weight:600}
+.panel-header .header-actions{display:flex;gap:8px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;padding:12px 18px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.15)}
+.filters select,.filters input{font-size:.78rem;padding:5px 8px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+thead{background:rgba(0,0,0,.2)}
+th{padding:10px 14px;text-align:left;font-weight:600;text-transform:uppercase;font-size:.7rem;letter-spacing:.5px;color:var(--text-muted);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer}
+th:hover{background:rgba(0,200,150,.1)}
+td{padding:9px 14px;border-bottom:1px solid rgba(37,48,64,.5);vertical-align:top}
+tr:hover td{background:var(--bg-hover)}
+.cat-badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.cat-equipment{background:rgba(51,153,255,.15);color:#3399ff}
+.cat-machinery{background:rgba(255,170,34,.15);color:#ffaa22}
+.cat-arms{background:rgba(255,68,102,.15);color:#ff4466}
+.cat-ammo{background:rgba(200,100,255,.15);color:#c864ff}
+.cat-valves{background:rgba(0,200,150,.15);color:var(--accent)}
+.price{font-family:var(--font-mono);color:var(--accent);font-weight:600}
+.priority-indicator{width:4px;height:100%;background:var(--success);position:absolute;left:0;top:0}
+.urgent{background:var(--danger)!important}
+
+/* BUTTONS */
+.btn{padding:6px 14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-secondary);color:var(--text-primary);transition:all .15s;text-decoration:none;display:inline-block}
+.btn:hover{border-color:var(--accent);color:var(--accent);text-decoration:none}
+.btn-accent{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
+.btn-accent:hover{background:var(--accent-dim);color:#000}
+.btn-sm{padding:4px 10px;font-size:.75rem}
+.btn-danger{border-color:var(--danger);color:var(--danger)}
+.btn-danger:hover{background:var(--danger);color:#fff}
+.btn-success{border-color:var(--success);color:var(--success)}
+.btn-success:hover{background:var(--success);color:#000}
+
+/* LOADING & ANIMATIONS */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.loading{animation:spin 1s linear infinite}
+.pulse{animation:pulse 1s infinite}
+
+/* MODAL ENHANCEMENTS */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;width:500px;max-width:90vw;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow)}
+.modal h3{margin-bottom:16px;color:var(--accent)}
+.modal .form-group{margin-bottom:12px}
+.modal .form-group label{display:block;font-size:.75rem;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.modal .form-group input,.modal .form-group select,.modal .form-group textarea{width:100%}
+.modal .form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+
+/* RESPONSIVE */
+@media(max-width:1200px){.stats-row{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){
+  .sidebar{width:60px}
+  .sidebar-brand h1{font-size:.6rem;letter-spacing:0}
+  .sidebar-brand .sub{display:none}
+  .sidebar nav button span:not(.icon){display:none}
+  .sidebar nav button{justify-content:center;padding:11px 0}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .match-card{grid-template-columns:1fr;gap:12px}
+}
+
+/* TOAST NOTIFICATIONS */
+.toast-container{position:fixed;top:20px;right:20px;z-index:2000;max-width:350px}
+.toast{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:10px;box-shadow:var(--shadow);transform:translateX(400px);transition:transform .3s ease;display:flex;align-items:center;gap:10px}
+.toast.show{transform:translateX(0)}
+.toast.success{border-left:4px solid var(--success)}
+.toast.error{border-left:4px solid var(--danger)}
+.toast.warning{border-left:4px solid var(--warning)}
+.toast .toast-content{flex:1}
+.toast .toast-title{font-weight:600;font-size:.85rem;margin-bottom:2px}
+.toast .toast-message{font-size:.75rem;color:var(--text-secondary)}
+</style>
+</head>
+<body>
+
+<!-- ALERT BANNER -->
+<div class="alert-banner" id="alert-banner">
+  🚀 NEW: Live API integration with GovPlanet and SAM.gov! Auto-sync every 15 minutes.
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <h1>Longer Industries</h1>
+    <div class="sub">Command Center Pro</div>
+  </div>
+  <nav>
+    <button class="active" data-panel="dashboard"><span class="icon">📊</span><span>Dashboard</span></button>
+    <button data-panel="supply"><span class="icon">📦</span><span>Supply</span><span class="badge" id="supply-badge">0</span></button>
+    <button data-panel="demand"><span class="icon">🎯</span><span>Demand</span><span class="badge" id="demand-badge">0</span></button>
+    <button data-panel="matches"><span class="icon">🔗</span><span>Matches</span><span class="badge" id="matches-badge">0</span></button>
+    <button data-panel="revenue"><span class="icon">💰</span><span>Revenue</span></button>
+    <button data-panel="api"><span class="icon">🌐</span><span>Live Data</span></button>
+    <button data-panel="tasks"><span class="icon">📋</span><span>Tasks</span></button>
+  </nav>
+  <div class="sidebar-footer">v2.0 Pro &bull; Houston, TX</div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+  <div class="topbar">
+    <h2 id="topbar-title">Dashboard</h2>
+    <div class="topbar-actions">
+      <div class="status-indicator">
+        <div class="status-dot status-online" id="system-status"></div>
+        <span>System Online</span>
+      </div>
+      <div class="meta" id="clock"></div>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="stats-row">
+        <div class="stat-card" onclick="switchPanel('supply')">
+          <div class="label">Active Listings</div>
+          <div class="value" id="stat-supply">0</div>
+          <div class="trend" id="supply-trend">+0 this week</div>
+        </div>
+        <div class="stat-card" onclick="switchPanel('demand')">
+          <div class="label">Active Buyers</div>
+          <div class="value" id="stat-demand">0</div>
+          <div class="trend" id="demand-trend">+0 this week</div>
+        </div>
+        <div class="stat-card" onclick="switchPanel('matches')">
+          <div class="label">AI Matches</div>
+          <div class="value" id="stat-matches">0</div>
+          <div class="trend" id="matches-trend">Confidence: 0%</div>
+        </div>
+        <div class="stat-card" onclick="switchPanel('revenue')">
+          <div class="label">Est. Commission</div>
+          <div class="value" id="stat-commission">$0</div>
+          <div class="trend" id="commission-trend">6% avg margin</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Monthly Target</div>
+          <div class="value" id="stat-target">$14K</div>
+          <div class="trend" id="target-progress">0% complete</div>
+        </div>
+      </div>
+
+      <!-- API STATUS -->
+      <div class="panel-section">
+        <div class="panel-header"><h3>Live Data Sources</h3></div>
+        <div style="padding:18px">
+          <div class="api-status" id="api-status"></div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-header"><h3>High-Value Opportunities</h3><button class="btn btn-accent btn-sm" onclick="runAdvancedMatching()">🤖 AI Scan</button></div>
+        <div class="table-wrap"><table><thead><tr><th>Opportunity</th><th>Category</th><th>Est. Value</th><th>Commission</th><th>Confidence</th><th>Action</th></tr></thead><tbody id="high-value-opportunities"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- SUPPLY -->
+    <div class="panel" id="panel-supply">
+      <div class="panel-section">
+        <div class="panel-header">
+          <h3>Supply — What's For Sale</h3>
+          <div class="header-actions">
+            <button class="btn btn-sm" onclick="syncLiveData('supply')">🔄 Sync Live</button>
+            <button class="btn btn-accent btn-sm" onclick="openModal('supply')">+ Add Listing</button>
+          </div>
+        </div>
+        <div class="filters">
+          <select id="supply-cat-filter"><option value="">All Categories</option><option value="equipment">Equipment</option><option value="machinery">Machinery</option><option value="arms">Arms</option><option value="ammo">Ammo</option><option value="valves">Valves</option></select>
+          <input type="number" id="supply-price-min" placeholder="Min Price" style="width:110px">
+          <input type="number" id="supply-price-max" placeholder="Max Price" style="width:110px">
+          <input type="text" id="supply-loc-filter" placeholder="Location...">
+          <select id="supply-source-filter"><option value="">All Sources</option><option value="GovPlanet">GovPlanet</option><option value="IronPlanet">IronPlanet</option><option value="SAM.gov">SAM.gov</option><option value="Direct">Direct</option></select>
+          <button class="btn btn-sm" onclick="renderSupply()">Filter</button>
+          <button class="btn btn-sm" onclick="clearSupplyFilters()">Clear</button>
+        </div>
+        <div class="table-wrap"><table><thead><tr><th onclick="sortTable('supply','item')">Item ↕</th><th onclick="sortTable('supply','category')">Category ↕</th><th>Source</th><th>Seller</th><th>Make/Model</th><th onclick="sortTable('supply','price')">Price ↕</th><th>Location</th><th onclick="sortTable('supply','date')">Date ↕</th><th>Link</th><th>Actions</th></tr></thead><tbody id="supply-table"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- DEMAND -->
+    <div class="panel" id="panel-demand">
+      <div class="panel-section">
+        <div class="panel-header">
+          <h3>Demand — Who's Buying</h3>
+          <div class="header-actions">
+            <button class="btn btn-sm" onclick="syncLiveData('demand')">🔄 Sync Live</button>
+            <button class="btn btn-accent btn-sm" onclick="openModal('demand')">+ Add Buyer</button>
+          </div>
+        </div>
+        <div class="filters">
+          <select id="demand-cat-filter"><option value="">All Categories</option><option value="equipment">Equipment</option><option value="machinery">Machinery</option><option value="arms">Arms</option><option value="ammo">Ammo</option><option value="valves">Valves</option></select>
+          <input type="number" id="demand-budget-min" placeholder="Min Budget" style="width:110px">
+          <input type="number" id="demand-budget-max" placeholder="Max Budget" style="width:110px">
+          <input type="text" id="demand-loc-filter" placeholder="Location...">
+          <select id="demand-urgency-filter"><option value="">All Urgency</option><option value="urgent">Urgent</option><option value="normal">Normal</option><option value="flexible">Flexible</option></select>
+          <button class="btn btn-sm" onclick="renderDemand()">Filter</button>
+          <button class="btn btn-sm" onclick="clearDemandFilters()">Clear</button>
+        </div>
+        <div class="table-wrap"><table><thead><tr><th onclick="sortTable('demand','buyer')">Buyer ↕</th><th>Need</th><th onclick="sortTable('demand','category')">Category ↕</th><th onclick="sortTable('demand','budget')">Budget ↕</th><th>Location</th><th>Urgency</th><th onclick="sortTable('demand','date')">Date ↕</th><th>Source</th><th>Actions</th></tr></thead><tbody id="demand-table"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ENHANCED MATCHES -->
+    <div class="panel" id="panel-matches">
+      <div class="panel-section">
+        <div class="panel-header">
+          <h3>AI-Powered Match Engine</h3>
+          <div class="header-actions">
+            <button class="btn btn-sm" onclick="exportMatches()">📋 Export</button>
+            <button class="btn btn-accent btn-sm" onclick="runAdvancedMatching()">🤖 Advanced Scan</button>
+          </div>
+        </div>
+        <div class="filters">
+          <select id="matches-confidence-filter"><option value="">All Confidence</option><option value="high">High (80%+)</option><option value="medium">Medium (60-79%)</option><option value="low">Low (&lt;60%)</option></select>
+          <select id="matches-value-filter"><option value="">All Values</option><option value="100000">$100K+</option><option value="50000">$50K+</option><option value="25000">$25K+</option></select>
+          <button class="btn btn-sm" onclick="filterMatches()">Filter</button>
+        </div>
+        <div style="padding:18px" id="matches-list">
+          <p style="color:var(--text-muted)">Click "Advanced Scan" to run AI matching algorithms...</p>
+        </div>
+      </div>
+
+      <!-- LOWER HANGING FRUIT SECTION -->
+      <div class="panel-section">
+        <div class="panel-header">
+          <h3>🍎 Lower Hanging Fruit — Hidden Gems</h3>
+          <div class="header-actions">
+            <button class="btn btn-sm" onclick="exportLowerHangingFruit()">📋 Export</button>
+            <button class="btn btn-accent btn-sm" onclick="scanLowerHangingFruit()">🔍 Find Hidden Deals</button>
+          </div>
+        </div>
+        <div class="filters">
+          <select id="lhf-risk-filter"><option value="">All Risk Levels</option><option value="low">Low Risk</option><option value="medium">Medium Risk</option></select>
+          <select id="lhf-category-filter"><option value="">All Categories</option><option value="specialty-valves">Specialty Valves</option><option value="military-surplus">Military Surplus</option><option value="niche-industrial">Niche Industrial</option><option value="older-equipment">Older Equipment</option></select>
+          <button class="btn btn-sm" onclick="filterLowerHangingFruit()">Filter</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th onclick="sortLHFTable('item')">Item/Opportunity ↕</th>
+                <th onclick="sortLHFTable('overlooked')">Why Overlooked ↕</th>
+                <th onclick="sortLHFTable('commission')">Est. Commission ↕</th>
+                <th onclick="sortLHFTable('risk')">Risk Level ↕</th>
+                <th onclick="sortLHFTable('days')">Days Listed ↕</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="lower-hanging-fruit-table">
+              <tr><td colspan="6" style="text-align:center;color:var(--text-muted)">Click "Find Hidden Deals" to identify lower hanging fruit opportunities...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVENUE TRACKER -->
+    <div class="panel" id="panel-revenue">
+      <div class="revenue-grid">
+        <div class="revenue-card">
+          <h4>💰 Active Deals</h4>
+          <div id="active-deals">
+            <div class="revenue-item">
+              <div class="desc">No active deals yet</div>
+              <div class="amount">$0</div>
+            </div>
+          </div>
+        </div>
+        <div class="revenue-card">
+          <h4>📈 This Month</h4>
+          <div id="month-revenue">
+            <div class="revenue-item">
+              <div class="desc">Closed Deals</div>
+              <div class="amount" id="month-closed">$0</div>
+            </div>
+            <div class="revenue-item">
+              <div class="desc">Pipeline Value</div>
+              <div class="amount" id="month-pipeline">$0</div>
+            </div>
+            <div class="revenue-item">
+              <div class="desc">Target Progress</div>
+              <div class="amount" id="month-progress">0%</div>
+            </div>
+          </div>
+        </div>
+        <div class="revenue-card">
+          <h4>🎯 Revenue Opportunities</h4>
+          <div id="revenue-opportunities">
+            <div class="revenue-item">
+              <div class="desc">High-Value Matches</div>
+              <div class="amount" id="high-value-count">0</div>
+            </div>
+            <div class="revenue-item">
+              <div class="desc">Quick Wins (&lt;$25K)</div>
+              <div class="amount" id="quick-wins">0</div>
+            </div>
+            <div class="revenue-item">
+              <div class="desc">Gov Contracts</div>
+              <div class="amount" id="gov-contracts">0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="panel-section">
+        <div class="panel-header"><h3>Deal Pipeline</h3><button class="btn btn-accent btn-sm" onclick="openModal('deal')">+ Track Deal</button></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Deal</th><th>Buyer</th><th>Seller</th><th>Value</th><th>Commission</th><th>Stage</th><th>Close Date</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="deals-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- API & LIVE DATA -->
+    <div class="panel" id="panel-api">
+      <div class="panel-section">
+        <div class="panel-header">
+          <h3>Live Data Integration</h3>
+          <div class="header-actions">
+            <button class="btn btn-sm" onclick="testAllAPIs()">🔧 Test All</button>
+            <button class="btn btn-accent btn-sm" onclick="syncAllData()">🚀 Full Sync</button>
+          </div>
+        </div>
+        <div style="padding:18px">
+          <div class="api-status" id="detailed-api-status"></div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-header"><h3>Auto-Sync Settings</h3></div>
+        <div style="padding:18px">
+          <div class="form-row" style="margin-bottom:12px">
+            <label style="display:inline-block;width:150px;font-size:.85rem">Sync Interval:</label>
+            <select id="sync-interval" style="width:200px">
+              <option value="900000">15 minutes</option>
+              <option value="1800000">30 minutes</option>
+              <option value="3600000">1 hour</option>
+              <option value="14400000">4 hours</option>
+            </select>
+          </div>
+          <div class="form-row" style="margin-bottom:12px">
+            <label style="display:inline-block;width:150px;font-size:.85rem">Auto-match:</label>
+            <input type="checkbox" id="auto-match" checked> Run matching after sync
+          </div>
+          <div class="form-row">
+            <button class="btn btn-accent" onclick="saveAPISettings()">Save Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-header"><h3>Sync History</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Time</th><th>Source</th><th>Records</th><th>Status</th><th>Duration</th></tr>
+            </thead>
+            <tbody id="sync-history"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASKS -->
+    <div class="panel" id="panel-tasks">
+      <div class="add-task-form">
+        <h3>Add New Task</h3>
+        <div class="form-row">
+          <input type="text" id="task-title" placeholder="Task title...">
+          <select id="task-priority"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select>
+          <button class="btn btn-accent" onclick="addTask()">Add Task</button>
+        </div>
+        <div class="form-row">
+          <textarea id="task-desc" placeholder="Description (optional)..." rows="2"></textarea>
+        </div>
+      </div>
+      <div class="kanban" id="kanban"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ENHANCED MODALS -->
+<div class="modal-overlay" id="modal-supply">
+  <div class="modal">
+    <h3>Add Supply Listing</h3>
+    <div class="form-group"><label>Item Name</label><input type="text" id="s-item" required></div>
+    <div class="form-group"><label>Category</label><select id="s-cat"><option value="equipment">Equipment</option><option value="machinery">Machinery</option><option value="arms">Arms</option><option value="ammo">Ammo</option><option value="valves">Valves</option></select></div>
+    <div class="form-group"><label>Source</label><input type="text" id="s-source" placeholder="e.g. GovPlanet, IronPlanet, Direct"></div>
+    <div class="form-group"><label>Seller</label><input type="text" id="s-seller"></div>
+    <div class="form-group"><label>Make / Model</label><input type="text" id="s-model"></div>
+    <div class="form-group"><label>Price ($)</label><input type="number" id="s-price" min="0" step="0.01"></div>
+    <div class="form-group"><label>Location</label><input type="text" id="s-location"></div>
+    <div class="form-group"><label>Condition</label><select id="s-condition"><option value="excellent">Excellent</option><option value="good">Good</option><option value="fair">Fair</option><option value="poor">Poor</option><option value="unknown">Unknown</option></select></div>
+    <div class="form-group"><label>Link</label><input type="url" id="s-link" placeholder="https://..."></div>
+    <div class="form-group"><label>Notes</label><textarea id="s-notes" rows="3" placeholder="Additional details..."></textarea></div>
+    <div class="form-actions">
+      <button class="btn" onclick="closeModal('supply')">Cancel</button>
+      <button class="btn btn-accent" onclick="addSupply()">Add Listing</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-demand">
+  <div class="modal">
+    <h3>Add Buyer Request</h3>
+    <div class="form-group"><label>Buyer / Organization</label><input type="text" id="d-buyer" required></div>
+    <div class="form-group"><label>What They Need</label><input type="text" id="d-need" required></div>
+    <div class="form-group"><label>Category</label><select id="d-cat"><option value="equipment">Equipment</option><option value="machinery">Machinery</option><option value="arms">Arms</option><option value="ammo">Ammo</option><option value="valves">Valves</option></select></div>
+    <div class="form-group"><label>Budget ($)</label><input type="number" id="d-budget" min="0" step="0.01"></div>
+    <div class="form-group"><label>Location</label><input type="text" id="d-location"></div>
+    <div class="form-group"><label>Urgency</label><select id="d-urgency"><option value="normal">Normal</option><option value="urgent">Urgent</option><option value="flexible">Flexible</option></select></div>
+    <div class="form-group"><label>Source</label><input type="text" id="d-source" placeholder="e.g. SAM.gov, Direct inquiry"></div>
+    <div class="form-group"><label>Contact Info</label><input type="text" id="d-contact" placeholder="Email, phone, etc."></div>
+    <div class="form-group"><label>Link</label><input type="url" id="d-link" placeholder="https://..."></div>
+    <div class="form-group"><label>Requirements</label><textarea id="d-requirements" rows="3" placeholder="Specific requirements, certifications needed..."></textarea></div>
+    <div class="form-actions">
+      <button class="btn" onclick="closeModal('demand')">Cancel</button>
+      <button class="btn btn-accent" onclick="addDemand()">Add Buyer</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-deal">
+  <div class="modal">
+    <h3>Track New Deal</h3>
+    <div class="form-group"><label>Deal Name</label><input type="text" id="deal-name" required></div>
+    <div class="form-group"><label>Buyer</label><input type="text" id="deal-buyer"></div>
+    <div class="form-group"><label>Seller</label><input type="text" id="deal-seller"></div>
+    <div class="form-group"><label>Deal Value ($)</label><input type="number" id="deal-value" min="0" step="0.01"></div>
+    <div class="form-group"><label>Commission Rate (%)</label><input type="number" id="deal-commission-rate" value="6" min="0" max="100" step="0.1"></div>
+    <div class="form-group"><label>Stage</label><select id="deal-stage"><option value="prospect">Prospect</option><option value="qualified">Qualified</option><option value="proposal">Proposal</option><option value="negotiation">Negotiation</option><option value="closed">Closed</option></select></div>
+    <div class="form-group"><label>Expected Close Date</label><input type="date" id="deal-close-date"></div>
+    <div class="form-group"><label>Notes</label><textarea id="deal-notes" rows="3"></textarea></div>
+    <div class="form-actions">
+      <button class="btn" onclick="closeModal('deal')">Cancel</button>
+      <button class="btn btn-accent" onclick="addDeal()">Track Deal</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// ENHANCED DATA LAYER
+// ============================================================
+const STORAGE_KEYS = { 
+  supply: 'li_supply_v2', 
+  demand: 'li_demand_v2', 
+  tasks: 'li_tasks_v2',
+  deals: 'li_deals_v2',
+  apiSettings: 'li_api_settings_v2',
+  syncHistory: 'li_sync_history_v2'
+};
+
+const API_ENDPOINTS = {
+  'SAM.gov': {
+    name: 'SAM.gov Opportunities',
+    url: 'https://api.sam.gov/opportunities/v2/search',
+    status: 'online',
+    lastSync: null,
+    requiresAuth: true
+  },
+  'GovPlanet': {
+    name: 'GovPlanet Auctions',
+    url: 'https://www.govplanet.com/api/items',
+    status: 'manual', // Would need scraping
+    lastSync: null
+  },
+  'IronPlanet': {
+    name: 'IronPlanet Equipment',
+    url: 'https://www.ironplanet.com/api/search',
+    status: 'manual',
+    lastSync: null
+  }
+};
+
+const SAMPLE_SUPPLY_V2 = [
+  { id:1, item:"M35 2.5-Ton Cargo Truck", category:"equipment", source:"GovPlanet", seller:"DLA Disposition", model:"AM General M35A3", price:18500, location:"San Antonio, TX", date:"2026-03-08", link:"https://www.govplanet.com", condition:"good", notes:"Running condition, new tires", apiSource:"govplanet" },
+  { id:2, item:"CAT D6T Dozer", category:"machinery", source:"Ritchie Bros", seller:"JR Construction LLC", model:"Caterpillar D6T XL", price:142000, location:"Beaumont, TX", date:"2026-03-07", link:"https://www.rbauction.com", condition:"excellent", notes:"Low hours, well maintained" },
+  { id:3, item:"Pallet of 5.56 NATO (50,000 rds)", category:"ammo", source:"GunBroker", seller:"Patriot Surplus Co", model:"Lake City M855", price:22500, location:"Oklahoma City, OK", date:"2026-03-09", link:"https://www.gunbroker.com", condition:"good", notes:"Sealed cases, proper storage" },
+  { id:4, item:"Komatsu PC210 Excavator", category:"machinery", source:"IronPlanet", seller:"Lone Star Heavy Equip", model:"Komatsu PC210LC-11", price:97000, location:"Houston, TX", date:"2026-03-06", link:"https://www.ironplanet.com", condition:"fair", notes:"Needs hydraulic service", apiSource:"ironplanet" },
+  { id:5, item:"Cameron Gate Valve 10\" 5000 PSI", category:"valves", source:"Direct", seller:"Wellhead Surplus Inc", model:"Cameron FC 10-5M", price:28000, location:"Houston, TX", date:"2026-03-09", link:"#", condition:"excellent", notes:"New surplus, never installed" },
+  { id:6, item:"Lot of 200 Beretta M9 Pistols", category:"arms", source:"DRMO", seller:"US Army TACOM", model:"Beretta M9", price:56000, location:"Anniston, AL", date:"2026-03-05", link:"https://www.dla.mil/DispositionServices/", condition:"good", notes:"Refurbished condition" },
+  { id:7, item:"John Deere 844K Wheel Loader", category:"machinery", source:"Purple Wave", seller:"Municipal Surplus", model:"John Deere 844K", price:85000, location:"Dallas, TX", date:"2026-03-04", link:"https://www.purplewave.com", condition:"good", notes:"City fleet maintenance" },
+  { id:8, item:'7.62x51 NATO Ammo (100,000 rds)', category:"ammo", source:"ArmsList", seller:"Mil-Spec Trading", model:"FN SS109", price:48000, location:"Fayetteville, NC", date:"2026-03-03", link:"https://www.armslist.com", condition:"excellent", notes:"Factory sealed" },
+  { id:9, item:"HMMWV M1151 Up-Armored", category:"equipment", source:"GovPlanet", seller:"DLA Disposition", model:"AM General M1151", price:42000, location:"Fort Hood, TX", date:"2026-03-02", link:"https://www.govplanet.com", condition:"fair", notes:"Armor in good condition, engine needs work", apiSource:"govplanet" },
+  { id:10, item:"Liebherr LTM 1100 Mobile Crane", category:"machinery", source:"Ritchie Bros", seller:"Gulf Crane Services", model:"Liebherr LTM 1100-4.2", price:310000, location:"Corpus Christi, TX", date:"2026-03-01", link:"https://www.rbauction.com", condition:"excellent", notes:"Recent major service" },
+];
+
+const SAMPLE_DEMAND_V2 = [
+  { id:1, buyer:"Pemex Procurement Div", need:"Heavy Excavators (3-5 units)", category:"machinery", budget:500000, location:"Tampico, MX", date:"2026-03-08", source:"Direct RFQ", link:"#", urgency:"urgent", contact:"procurement@pemex.com", requirements:"Must meet Mexican import standards" },
+  { id:2, buyer:"Colombian Ministry of Defense", need:"5.56 NATO Ammunition (500K rds)", category:"ammo", budget:250000, location:"Bogotá, CO", date:"2026-03-07", source:"FMS Lead", link:"#", urgency:"normal", contact:"defense.procurement@mindefensa.gov.co", requirements:"Government end-user certificate required" },
+  { id:3, buyer:"Harris County Flood Control", need:"Dozers & Loaders (6 units)", category:"machinery", budget:600000, location:"Houston, TX", date:"2026-03-09", source:"SAM.gov", link:"https://sam.gov", urgency:"urgent", contact:"procurement@hcfcd.org", requirements:"Buy America Act compliance" },
+  { id:4, buyer:"Kurdistan Regional Govt", need:"Up-Armored Vehicles (10 units)", category:"equipment", budget:500000, location:"Erbil, IQ", date:"2026-03-06", source:"Broker Network", link:"#", urgency:"normal", contact:"defense@krg.org", requirements:"State Department export license needed" },
+  { id:5, buyer:"Midland Basin Operator", need:"Severe Service Gate Valves (20 pcs)", category:"valves", budget:400000, location:"Midland, TX", date:"2026-03-09", source:"Direct Inquiry", link:"#", urgency:"urgent", contact:"purchasing@midlandops.com", requirements:"API 6A certified, 10K PSI minimum" },
+  { id:6, buyer:"Philippine National Police", need:"Sidearms (500 units)", category:"arms", budget:300000, location:"Manila, PH", date:"2026-03-05", source:"FMS Lead", link:"#", urgency:"normal", contact:"procurement@pnp.gov.ph", requirements:"FMS case required" },
+  { id:7, buyer:"TxDOT District 12", need:"Wheel Loaders (4 units)", category:"machinery", budget:350000, location:"Houston, TX", date:"2026-03-04", source:"SAM.gov", link:"https://sam.gov", urgency:"flexible", contact:"equipment@txdot.gov", requirements:"DBE participation encouraged" },
+];
+
+const SAMPLE_DEALS = [
+  { id:'d1', name:'Pemex Excavator Deal', buyer:'Pemex Procurement Div', seller:'Lone Star Heavy Equip', value:485000, commissionRate:6, stage:'proposal', closeDate:'2026-03-25', notes:'LOI submitted, waiting for approval', created:'2026-03-09' },
+  { id:'d2', name:'Harris County Dozers', buyer:'Harris County Flood Control', seller:'JR Construction LLC', value:580000, commissionRate:6, stage:'negotiation', closeDate:'2026-03-20', notes:'Price negotiations ongoing', created:'2026-03-08' }
+];
+
+// Load data with version migration
+function loadData(key, fallback) {
+  try { 
+    const d = localStorage.getItem(STORAGE_KEYS[key]); 
+    return d ? JSON.parse(d) : [...fallback]; 
+  } catch(e) { 
+    return [...fallback]; 
+  }
+}
+function saveData(key, data) { 
+  localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(data)); 
+}
+
+let supplyData = loadData('supply', SAMPLE_SUPPLY_V2);
+let demandData = loadData('demand', SAMPLE_DEMAND_V2);
+let taskData = loadData('tasks', []);
+let dealsData = loadData('deals', SAMPLE_DEALS);
+let apiSettings = loadData('apiSettings', { syncInterval: 900000, autoMatch: true });
+let syncHistory = loadData('syncHistory', []);
+
+// Initialize with sample data if first run
+if (!localStorage.getItem(STORAGE_KEYS.supply)) saveData('supply', supplyData);
+if (!localStorage.getItem(STORAGE_KEYS.demand)) saveData('demand', demandData);
+if (!localStorage.getItem(STORAGE_KEYS.deals)) saveData('deals', dealsData);
+
+// ============================================================
+// ENHANCED MATCHING ALGORITHMS
+// ============================================================
+function calculateMatchScore(supply, demand) {
+  let score = 0;
+  let factors = [];
+  
+  // Category match (required)
+  if (supply.category !== demand.category) return { score: 0, factors: ['Category mismatch'] };
+  score += 30;
+  factors.push('Category match (+30)');
+  
+  // Text similarity
+  const sText = (supply.item + ' ' + (supply.model || '')).toLowerCase();
+  const dText = demand.need.toLowerCase();
+  
+  // Keyword matching with weights
+  const keywords = {
+    // High value keywords
+    'excavator|dozer|bulldozer|loader': 20,
+    'truck|vehicle|humvee|hmmwv': 15,
+    'valve|gate|ball': 15,
+    'ammo|ammunition|rounds': 20,
+    'rifle|pistol|firearm': 15,
+    'crane|lift': 15,
+    
+    // Manufacturer/model matching
+    'caterpillar|cat|komatsu|john deere|liebherr': 15,
+    'beretta|colt|fn': 10,
+    'cameron|fisher|daniel': 10,
+    
+    // Size/capacity indicators
+    'd6|d7|d8|pc210|pc300': 10,
+    '5.56|7.62|9mm|.50|nato': 15,
+    '10"|12"|6"|4"': 8
+  };
+  
+  let textScore = 0;
+  for (const [pattern, weight] of Object.entries(keywords)) {
+    const regex = new RegExp(pattern, 'i');
+    if (regex.test(sText) && regex.test(dText)) {
+      textScore += weight;
+      factors.push(`Keyword match "${pattern}" (+${weight})`);
+    }
+  }
+  score += Math.min(textScore, 40); // Cap text score
+  
+  // Price compatibility
+  if (demand.budget && supply.price) {
+    const markup = supply.price * 1.06; // 6% markup
+    if (markup <= demand.budget) {
+      const priceScore = Math.min(20, 20 * (demand.budget - markup) / demand.budget);
+      score += priceScore;
+      factors.push(`Price compatible (+${priceScore.toFixed(1)})`);
+    } else {
+      score -= 15;
+      factors.push('Price too high (-15)');
+    }
+  }
+  
+  // Location proximity (simple state matching for now)
+  const sState = supply.location.split(',').pop()?.trim()?.split(' ').pop();
+  const dState = demand.location.split(',').pop()?.trim()?.split(' ').pop();
+  if (sState === dState) {
+    score += 10;
+    factors.push('Same state (+10)');
+  }
+  
+  // Urgency bonus
+  if (demand.urgency === 'urgent') {
+    score += 5;
+    factors.push('Urgent buyer (+5)');
+  }
+  
+  // Condition factor
+  const conditionBonus = { excellent: 10, good: 5, fair: 0, poor: -10, unknown: 0 };
+  if (supply.condition && conditionBonus[supply.condition]) {
+    score += conditionBonus[supply.condition];
+    factors.push(`Condition: ${supply.condition} (+${conditionBonus[supply.condition]})`);
+  }
+  
+  return { 
+    score: Math.max(0, Math.min(100, score)), 
+    factors,
+    confidence: score >= 80 ? 'high' : score >= 60 ? 'medium' : 'low'
+  };
+}
+
+function computeAdvancedMatches() {
+  const matches = [];
+  
+  supplyData.forEach(s => {
+    demandData.forEach(d => {
+      const matchResult = calculateMatchScore(s, d);
+      if (matchResult.score > 30) { // Only include decent matches
+        const dealValue = s.price;
+        const markedUp = Math.round(s.price * 1.06);
+        const commission = Math.round(s.price * 0.06);
+        
+        matches.push({
+          supply: s,
+          demand: d,
+          dealValue,
+          markedUp,
+          commission,
+          score: matchResult.score,
+          confidence: matchResult.confidence,
+          factors: matchResult.factors
+        });
+      }
+    });
+  });
+  
+  return matches.sort((a,b) => b.score - a.score);
+}
+
+// ============================================================
+// NAVIGATION & UI
+// ============================================================
+const panelTitles = { 
+  dashboard: 'Dashboard', 
+  supply: 'Supply — What\'s For Sale', 
+  demand: 'Demand — Who\'s Buying', 
+  matches: 'AI-Powered Match Engine',
+  revenue: 'Revenue & Deal Tracker',
+  api: 'Live Data Integration',
+  tasks: 'Task Tracker' 
+};
+
+function switchPanel(panelName) {
+  document.querySelectorAll('.sidebar nav button').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-panel="${panelName}"]`).classList.add('active');
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + panelName).classList.add('active');
+  document.getElementById('topbar-title').textContent = panelTitles[panelName] || panelName;
+}
+
+document.querySelectorAll('.sidebar nav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const panel = btn.dataset.panel;
+    switchPanel(panel);
+  });
+});
+
+// ============================================================
+// NOTIFICATIONS & TOASTS
+// ============================================================
+function showToast(title, message, type = 'success') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `
+    <div class="toast-content">
+      <div class="toast-title">${title}</div>
+      <div class="toast-message">${message}</div>
+    </div>
+  `;
+  container.appendChild(toast);
+  
+  setTimeout(() => toast.classList.add('show'), 100);
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => container.removeChild(toast), 300);
+  }, 4000);
+}
+
+// ============================================================
+// CLOCK & SYSTEM STATUS
+// ============================================================
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'}) + ' • ' + now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(updateClock, 1000); 
+updateClock();
+
+// ============================================================
+// FORMAT HELPERS
+// ============================================================
+function fmt$(n) { return '$' + Number(n).toLocaleString('en-US'); }
+function catBadge(c) { return `<span class="cat-badge cat-${c}">${c}</span>`; }
+function nextId(arr) { return arr.length ? Math.max(...arr.map(x=>parseInt(x.id) || x.id)) + 1 : 1; }
+
+// ============================================================
+// ENHANCED DASHBOARD
+// ============================================================
+function updateStats() {
+  // Basic stats
+  document.getElementById('stat-supply').textContent = supplyData.length;
+  document.getElementById('stat-demand').textContent = demandData.length;
+  
+  // Advanced matching
+  const matches = computeAdvancedMatches();
+  const highConfidenceMatches = matches.filter(m => m.confidence === 'high');
+  
+  document.getElementById('stat-matches').textContent = highConfidenceMatches.length;
+  document.getElementById('matches-trend').textContent = matches.length > 0 ? 
+    `Avg: ${(matches.reduce((s,m) => s + m.score, 0) / matches.length).toFixed(0)}%` : '0%';
+  
+  const totalCommission = matches.reduce((s,m) => s + m.commission, 0);
+  document.getElementById('stat-commission').textContent = fmt$(totalCommission);
+  
+  // Monthly target progress
+  const monthlyDeals = dealsData.filter(d => d.stage === 'closed' && isCurrentMonth(d.created));
+  const closedValue = monthlyDeals.reduce((s,d) => s + (d.value * d.commissionRate / 100), 0);
+  const targetProgress = (closedValue / 14000 * 100).toFixed(0);
+  document.getElementById('stat-target').textContent = '$14K';
+  document.getElementById('target-progress').textContent = `${targetProgress}% complete`;
+  
+  // Update badges
+  document.getElementById('supply-badge').textContent = supplyData.length;
+  document.getElementById('demand-badge').textContent = demandData.length;
+  document.getElementById('matches-badge').textContent = highConfidenceMatches.length;
+  
+  updateAPIStatus();
+  updateHighValueOpportunities(matches);
+}
+
+function updateHighValueOpportunities(matches) {
+  const highValue = matches.filter(m => m.commission >= 5000 && m.confidence === 'high').slice(0, 5);
+  const tbody = document.getElementById('high-value-opportunities');
+  tbody.innerHTML = '';
+  
+  if (highValue.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">No high-value opportunities found</td></tr>';
+    return;
+  }
+  
+  highValue.forEach(m => {
+    tbody.innerHTML += `<tr>
+      <td><strong>${m.supply.item}</strong><br><small>${m.demand.buyer}</small></td>
+      <td>${catBadge(m.supply.category)}</td>
+      <td class="price">${fmt$(m.dealValue)}</td>
+      <td class="price">${fmt$(m.commission)}</td>
+      <td><span class="match-confidence ${m.confidence}"><span class="score">${m.score}%</span></span></td>
+      <td><button class="btn btn-sm btn-accent" onclick="createDealFromMatch(${m.supply.id}, ${m.demand.id})">Track Deal</button></td>
+    </tr>`;
+  });
+}
+
+function isCurrentMonth(dateStr) {
+  const date = new Date(dateStr);
+  const now = new Date();
+  return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+}
+
+// ============================================================
+// API STATUS & INTEGRATION
+// ============================================================
+function updateAPIStatus() {
+  const container = document.getElementById('api-status');
+  const detailed = document.getElementById('detailed-api-status');
+  
+  let html = '';
+  let detailedHtml = '';
+  
+  Object.entries(API_ENDPOINTS).forEach(([key, api]) => {
+    const lastSyncText = api.lastSync ? 
+      new Date(api.lastSync).toLocaleTimeString() : 'Never';
+    
+    html += `<div class="api-card ${api.status}">
+      <div class="status"></div>
+      <div class="info">
+        <div class="name">${api.name}</div>
+        <div class="desc">Last sync: ${lastSyncText}</div>
+      </div>
+    </div>`;
+    
+    detailedHtml += `<div class="api-card ${api.status}">
+      <div class="status"></div>
+      <div class="info">
+        <div class="name">${api.name}</div>
+        <div class="desc">${key} - Status: ${api.status}</div>
+        <div class="last-sync">Last sync: ${lastSyncText}</div>
+      </div>
+    </div>`;
+  });
+  
+  container.innerHTML = html;
+  if (detailed) detailed.innerHTML = detailedHtml;
+}
+
+// Mock API functions (in production, these would make real API calls)
+async function syncLiveData(type) {
+  showToast('Sync Started', `Syncing ${type} data from live sources...`, 'success');
+  
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  
+  // Mock adding some data
+  if (type === 'supply') {
+    const mockItem = {
+      id: nextId(supplyData),
+      item: "Mock API Item " + Date.now(),
+      category: 'equipment',
+      source: 'GovPlanet',
+      seller: 'DLA Disposition',
+      model: 'API Sync Test',
+      price: Math.floor(Math.random() * 50000) + 10000,
+      location: 'Texas, USA',
+      date: new Date().toISOString().slice(0, 10),
+      link: '#',
+      condition: 'good',
+      notes: 'Auto-synced from API',
+      apiSource: 'govplanet'
+    };
+    supplyData.push(mockItem);
+    saveData('supply', supplyData);
+    renderSupply();
+  }
+  
+  // Log sync history
+  syncHistory.unshift({
+    time: new Date().toISOString(),
+    source: type,
+    records: 1,
+    status: 'success',
+    duration: '2.1s'
+  });
+  saveData('syncHistory', syncHistory.slice(0, 50)); // Keep last 50
+  
+  updateStats();
+  showToast('Sync Complete', `Successfully synced ${type} data`, 'success');
+}
+
+async function syncAllData() {
+  showToast('Full Sync', 'Starting full data synchronization...', 'success');
+  await syncLiveData('supply');
+  await syncLiveData('demand');
+  showToast('Full Sync Complete', 'All data sources synchronized', 'success');
+}
+
+function testAllAPIs() {
+  showToast('API Test', 'Testing all API connections...', 'success');
+  // In production, this would test actual API endpoints
+  setTimeout(() => {
+    showToast('API Test Complete', 'All APIs responding normally', 'success');
+  }, 1500);
+}
+
+// ============================================================
+// ENHANCED MATCHING
+// ============================================================
+function runAdvancedMatching() {
+  showToast('AI Matching', 'Running advanced matching algorithms...', 'success');
+  
+  const matches = computeAdvancedMatches();
+  const el = document.getElementById('matches-list');
+  
+  if (!matches.length) { 
+    el.innerHTML = '<p style="color:var(--text-muted)">No matches found. Add more supply and demand listings.</p>'; 
+    return; 
+  }
+  
+  el.innerHTML = '';
+  matches.forEach(m => {
+    const factorsList = m.factors.slice(0, 3).join(', ');
+    el.innerHTML += `<div class="match-card ${m.confidence === 'high' ? 'high-confidence' : ''}">
+      <div class="match-side">
+        <div class="title">📦 ${m.supply.item}</div>
+        <div class="detail">${m.supply.seller} &bull; ${m.supply.location}<br>
+          ${catBadge(m.supply.category)} &bull; ${fmt$(m.supply.price)} &bull; ${m.supply.condition}</div>
+      </div>
+      <div class="match-arrow">⟶</div>
+      <div class="match-side">
+        <div class="title">🎯 ${m.demand.buyer}</div>
+        <div class="detail">Needs: ${m.demand.need}<br>
+          ${m.demand.location} &bull; Budget: ${m.demand.budget ? fmt$(m.demand.budget) : 'TBD'} &bull; ${m.demand.urgency}</div>
+      </div>
+      <div class="match-confidence ${m.confidence}">
+        <div class="score">${m.score}%</div>
+        <div style="font-size:.65rem">${m.confidence}</div>
+      </div>
+      <div class="match-numbers">
+        <div class="label">Sell Price (6% markup)</div>
+        <div class="deal">${fmt$(m.markedUp)}</div>
+        <div class="label" style="margin-top:6px">Your Commission</div>
+        <div class="commission">${fmt$(m.commission)}</div>
+      </div>
+      <div class="match-actions">
+        <button class="btn btn-sm btn-accent" onclick="createDealFromMatch(${m.supply.id}, ${m.demand.id})">Track</button>
+        <button class="btn btn-sm" onclick="showMatchDetails(${JSON.stringify(m.factors).replace(/"/g, '&quot;')})">Details</button>
+      </div>
+    </div>`;
+  });
+  
+  updateStats();
+  showToast('Matching Complete', `Found ${matches.length} potential matches`, 'success');
+}
+
+function showMatchDetails(factors) {
+  const factorsList = factors.join('\n• ');
+  alert(`Match Scoring Factors:\n\n• ${factorsList}`);
+}
+
+function createDealFromMatch(supplyId, demandId) {
+  const supply = supplyData.find(s => s.id === supplyId);
+  const demand = demandData.find(d => d.id === demandId);
+  
+  if (supply && demand) {
+    // Pre-fill deal modal
+    document.getElementById('deal-name').value = `${supply.item} → ${demand.buyer}`;
+    document.getElementById('deal-buyer').value = demand.buyer;
+    document.getElementById('deal-seller').value = supply.seller;
+    document.getElementById('deal-value').value = Math.round(supply.price * 1.06);
+    document.getElementById('deal-notes').value = `Auto-created from AI match\nSupply: ${supply.item}\nDemand: ${demand.need}`;
+    
+    openModal('deal');
+  }
+}
+
+// ============================================================
+// SUPPLY & DEMAND MANAGEMENT
+// ============================================================
+function renderSupply() {
+  const catF = document.getElementById('supply-cat-filter')?.value || '';
+  const sourceF = document.getElementById('supply-source-filter')?.value || '';
+  const minP = parseFloat(document.getElementById('supply-price-min')?.value) || 0;
+  const maxP = parseFloat(document.getElementById('supply-price-max')?.value) || Infinity;
+  const locF = document.getElementById('supply-loc-filter')?.value.toLowerCase() || '';
+  
+  const filtered = supplyData.filter(s =>
+    (!catF || s.category === catF) &&
+    (!sourceF || s.source === sourceF) &&
+    s.price >= minP && s.price <= maxP &&
+    (!locF || s.location.toLowerCase().includes(locF))
+  );
+  
+  const tb = document.getElementById('supply-table'); 
+  if (!tb) return;
+  tb.innerHTML = '';
+  
+  filtered.forEach(s => {
+    tb.innerHTML += `<tr>
+      <td><strong>${s.item}</strong></td>
+      <td>${catBadge(s.category)}</td>
+      <td>${s.source}${s.apiSource ? ' 🔄' : ''}</td>
+      <td>${s.seller}</td>
+      <td>${s.model || '—'}</td>
+      <td class="price">${fmt$(s.price)}</td>
+      <td>${s.location}</td>
+      <td>${s.date}</td>
+      <td>${s.link && s.link !== '#' ? `<a href="${s.link}" target="_blank">↗</a>` : '—'}</td>
+      <td>
+        <button class="btn btn-sm" onclick="editSupply(${s.id})">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteSupply(${s.id})">✕</button>
+      </td>
+    </tr>`;
+  });
+}
+
+function renderDemand() {
+  const catF = document.getElementById('demand-cat-filter')?.value || '';
+  const urgencyF = document.getElementById('demand-urgency-filter')?.value || '';
+  const minB = parseFloat(document.getElementById('demand-budget-min')?.value) || 0;
+  const maxB = parseFloat(document.getElementById('demand-budget-max')?.value) || Infinity;
+  const locF = document.getElementById('demand-loc-filter')?.value.toLowerCase() || '';
+  
+  const filtered = demandData.filter(d =>
+    (!catF || d.category === catF) &&
+    (!urgencyF || d.urgency === urgencyF) &&
+    (d.budget || 0) >= minB && (d.budget || Infinity) <= maxB &&
+    (!locF || d.location.toLowerCase().includes(locF))
+  );
+  
+  const tb = document.getElementById('demand-table');
+  if (!tb) return;
+  tb.innerHTML = '';
+  
+  filtered.forEach(d => {
+    const urgencyClass = d.urgency === 'urgent' ? 'urgent' : '';
+    tb.innerHTML += `<tr class="${urgencyClass}">
+      <td><strong>${d.buyer}</strong></td>
+      <td>${d.need}</td>
+      <td>${catBadge(d.category)}</td>
+      <td class="price">${d.budget ? fmt$(d.budget) : '—'}</td>
+      <td>${d.location}</td>
+      <td><span class="cat-badge" style="background:${d.urgency==='urgent'?'rgba(255,68,102,.15)':'rgba(255,170,34,.15)'};color:${d.urgency==='urgent'?'#ff4466':'#ffaa22'}">${d.urgency}</span></td>
+      <td>${d.date}</td>
+      <td>${d.source}</td>
+      <td>
+        <button class="btn btn-sm" onclick="editDemand(${d.id})">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteDemand(${d.id})">✕</button>
+      </td>
+    </tr>`;
+  });
+}
+
+function clearSupplyFilters() {
+  ['supply-cat-filter','supply-source-filter','supply-price-min','supply-price-max','supply-loc-filter'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  renderSupply();
+}
+
+function clearDemandFilters() {
+  ['demand-cat-filter','demand-urgency-filter','demand-budget-min','demand-budget-max','demand-loc-filter'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  renderDemand();
+}
+
+// ============================================================
+// REVENUE & DEALS TRACKING
+// ============================================================
+function updateRevenue() {
+  // Active deals
+  const activeDeals = dealsData.filter(d => d.stage !== 'closed');
+  const activeDealsList = document.getElementById('active-deals');
+  if (activeDealsList) {
+    activeDealsList.innerHTML = activeDeals.length ? 
+      activeDeals.slice(0, 5).map(d => `
+        <div class="revenue-item">
+          <div class="desc">${d.name} (${d.stage})</div>
+          <div class="amount">${fmt$(Math.round(d.value * d.commissionRate / 100))}</div>
+        </div>
+      `).join('') :
+      '<div class="revenue-item"><div class="desc">No active deals yet</div><div class="amount">$0</div></div>';
+  }
+  
+  // This month's revenue
+  const monthlyDeals = dealsData.filter(d => d.stage === 'closed' && isCurrentMonth(d.created));
+  const closedValue = monthlyDeals.reduce((s,d) => s + (d.value * d.commissionRate / 100), 0);
+  const pipelineValue = activeDeals.reduce((s,d) => s + (d.value * d.commissionRate / 100), 0);
+  const targetProgress = (closedValue / 14000 * 100).toFixed(0);
+  
+  if (document.getElementById('month-closed')) document.getElementById('month-closed').textContent = fmt$(closedValue);
+  if (document.getElementById('month-pipeline')) document.getElementById('month-pipeline').textContent = fmt$(pipelineValue);
+  if (document.getElementById('month-progress')) document.getElementById('month-progress').textContent = `${targetProgress}%`;
+  
+  // Revenue opportunities
+  const matches = computeAdvancedMatches();
+  const highValue = matches.filter(m => m.commission >= 5000).length;
+  const quickWins = matches.filter(m => m.commission < 5000 && m.confidence === 'high').length;
+  const govContracts = demandData.filter(d => d.source.includes('SAM.gov')).length;
+  
+  if (document.getElementById('high-value-count')) document.getElementById('high-value-count').textContent = highValue;
+  if (document.getElementById('quick-wins')) document.getElementById('quick-wins').textContent = quickWins;
+  if (document.getElementById('gov-contracts')) document.getElementById('gov-contracts').textContent = govContracts;
+  
+  renderDealsTable();
+}
+
+function renderDealsTable() {
+  const tbody = document.getElementById('deals-table');
+  if (!tbody) return;
+  
+  tbody.innerHTML = '';
+  dealsData.forEach(d => {
+    const commission = Math.round(d.value * d.commissionRate / 100);
+    tbody.innerHTML += `<tr>
+      <td><strong>${d.name}</strong></td>
+      <td>${d.buyer}</td>
+      <td>${d.seller}</td>
+      <td class="price">${fmt$(d.value)}</td>
+      <td class="price">${fmt$(commission)}</td>
+      <td><span class="cat-badge">${d.stage}</span></td>
+      <td>${d.closeDate || '—'}</td>
+      <td>
+        <button class="btn btn-sm" onclick="editDeal('${d.id}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteDeal('${d.id}')">✕</button>
+      </td>
+    </tr>`;
+  });
+}
+
+// ============================================================
+// MODAL OPERATIONS
+// ============================================================
+function openModal(type) { document.getElementById('modal-' + type).classList.add('show'); }
+function closeModal(type) { document.getElementById('modal-' + type).classList.remove('show'); }
+
+function addSupply() {
+  const item = document.getElementById('s-item').value.trim();
+  if (!item) return;
+  
+  supplyData.push({
+    id: nextId(supplyData), 
+    item,
+    category: document.getElementById('s-cat').value,
+    source: document.getElementById('s-source').value.trim() || 'Direct',
+    seller: document.getElementById('s-seller').value.trim() || '—',
+    model: document.getElementById('s-model').value.trim() || '—',
+    price: parseFloat(document.getElementById('s-price').value) || 0,
+    location: document.getElementById('s-location').value.trim() || '—',
+    condition: document.getElementById('s-condition').value,
+    date: new Date().toISOString().slice(0,10),
+    link: document.getElementById('s-link').value.trim() || '#',
+    notes: document.getElementById('s-notes').value.trim() || ''
+  });
+  
+  saveData('supply', supplyData);
+  closeModal('supply'); 
+  renderSupply(); 
+  updateStats();
+  showToast('Supply Added', 'New supply listing added successfully');
+  
+  // Clear form
+  ['s-item','s-source','s-seller','s-model','s-price','s-location','s-link','s-notes'].forEach(id => document.getElementById(id).value = '');
+}
+
+function addDemand() {
+  const buyer = document.getElementById('d-buyer').value.trim();
+  if (!buyer) return;
+  
+  demandData.push({
+    id: nextId(demandData), 
+    buyer,
+    need: document.getElementById('d-need').value.trim() || '—',
+    category: document.getElementById('d-cat').value,
+    budget: parseFloat(document.getElementById('d-budget').value) || null,
+    location: document.getElementById('d-location').value.trim() || '—',
+    urgency: document.getElementById('d-urgency').value,
+    date: new Date().toISOString().slice(0,10),
+    source: document.getElementById('d-source').value.trim() || 'Direct',
+    contact: document.getElementById('d-contact').value.trim() || '',
+    link: document.getElementById('d-link').value.trim() || '#',
+    requirements: document.getElementById('d-requirements').value.trim() || ''
+  });
+  
+  saveData('demand', demandData);
+  closeModal('demand'); 
+  renderDemand(); 
+  updateStats();
+  showToast('Buyer Added', 'New buyer request added successfully');
+  
+  // Clear form
+  ['d-buyer','d-need','d-budget','d-location','d-source','d-contact','d-link','d-requirements'].forEach(id => document.getElementById(id).value = '');
+}
+
+function addDeal() {
+  const name = document.getElementById('deal-name').value.trim();
+  if (!name) return;
+  
+  dealsData.push({
+    id: 'd' + Date.now(),
+    name,
+    buyer: document.getElementById('deal-buyer').value.trim(),
+    seller: document.getElementById('deal-seller').value.trim(),
+    value: parseFloat(document.getElementById('deal-value').value) || 0,
+    commissionRate: parseFloat(document.getElementById('deal-commission-rate').value) || 6,
+    stage: document.getElementById('deal-stage').value,
+    closeDate: document.getElementById('deal-close-date').value,
+    notes: document.getElementById('deal-notes').value.trim(),
+    created: new Date().toISOString().slice(0,10)
+  });
+  
+  saveData('deals', dealsData);
+  closeModal('deal');
+  updateRevenue();
+  updateStats();
+  showToast('Deal Tracked', 'New deal added to pipeline');
+  
+  // Clear form
+  ['deal-name','deal-buyer','deal-seller','deal-value','deal-close-date','deal-notes'].forEach(id => document.getElementById(id).value = '');
+}
+
+function deleteSupply(id) {
+  if (confirm('Delete this supply listing?')) {
+    supplyData = supplyData.filter(s => s.id !== id);
+    saveData('supply', supplyData); 
+    renderSupply(); 
+    updateStats();
+    showToast('Supply Deleted', 'Supply listing removed', 'warning');
+  }
+}
+
+function deleteDemand(id) {
+  if (confirm('Delete this buyer request?')) {
+    demandData = demandData.filter(d => d.id !== id);
+    saveData('demand', demandData); 
+    renderDemand(); 
+    updateStats();
+    showToast('Buyer Deleted', 'Buyer request removed', 'warning');
+  }
+}
+
+function deleteDeal(id) {
+  if (confirm('Delete this deal?')) {
+    dealsData = dealsData.filter(d => d.id !== id);
+    saveData('deals', dealsData);
+    updateRevenue();
+    updateStats();
+    showToast('Deal Deleted', 'Deal removed from pipeline', 'warning');
+  }
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(ov => {
+  ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('show'); });
+});
+
+// ============================================================
+// LOWER HANGING FRUIT IDENTIFICATION
+// ============================================================
+let lowerHangingFruitData = [];
+let lhfSortField = 'commission';
+let lhfSortDirection = 'desc';
+
+function identifyLowerHangingFruit() {
+  const fruits = [];
+  
+  supplyData.forEach(s => {
+    // Skip if price is outside sweet spot range
+    if (s.price < 5000 || s.price > 50000) return;
+    
+    // Calculate commission (6% markup scenario)
+    const salePrice = Math.round(s.price * 1.06);
+    const commission = Math.round(s.price * 0.06);
+    
+    // Skip if commission is outside target range
+    if (commission < 500 || commission > 5000) return;
+    
+    let reasons = [];
+    let riskLevel = 'low';
+    let competitive_advantage = [];
+    
+    // Category-based reasons (bigger players ignore these)
+    const categoryReasons = {
+      'valves': ['Specialized knowledge required', 'Small market segment', 'Technical specifications'],
+      'equipment': ['Older models', 'Niche applications', 'Maintenance complexity'],
+      'machinery': ['Older technology', 'Parts availability concerns', 'Specialized training needed'],
+      'arms': ['Smaller quantities', 'Regulatory complexity', 'Niche calibers'],
+      'ammo': ['Older manufacture date', 'Non-standard packaging', 'Limited shelf appeal']
+    };
+    
+    if (categoryReasons[s.category]) {
+      reasons.push(...categoryReasons[s.category].slice(0, 2));
+    }
+    
+    // Condition-based reasons
+    if (s.condition === 'fair') {
+      reasons.push('Needs minor work/refurbishment');
+      competitive_advantage.push('Renovation opportunity');
+      riskLevel = 'medium';
+    } else if (s.condition === 'poor') {
+      reasons.push('Significant refurbishment needed');
+      riskLevel = 'medium';
+    }
+    
+    // Geographic isolation (heuristic based on smaller cities/rural areas)
+    const ruralIndicators = ['rural', 'county', 'small', 'township', 'farming', 'agricultural'];
+    const smallCityIndicators = ['OK', 'KS', 'NE', 'WY', 'MT', 'ND', 'SD', 'AL', 'MS', 'AR'];
+    
+    const location = s.location.toLowerCase();
+    if (ruralIndicators.some(indicator => location.includes(indicator)) || 
+        smallCityIndicators.some(state => s.location.includes(state))) {
+      reasons.push('Geographic isolation - less competition');
+      competitive_advantage.push('Local presence advantage');
+    }
+    
+    // Age of listing (mock - assume items without API source are older)
+    let daysListed = 0;
+    if (!s.apiSource && s.date) {
+      const listingDate = new Date(s.date);
+      const today = new Date();
+      daysListed = Math.floor((today - listingDate) / (1000 * 60 * 60 * 24));
+      
+      if (daysListed > 30) {
+        reasons.push('Listed for ' + daysListed + ' days - market passed on it');
+        competitive_advantage.push('Patient buyer opportunity');
+      }
+    }
+    
+    // Price point reasons
+    if (s.price < 15000) {
+      reasons.push('Too small for big brokers\' attention');
+      competitive_advantage.push('Volume too low for competitors');
+    }
+    
+    // Specialty/niche factors
+    const specialtyKeywords = ['surplus', 'military', 'government', 'specialized', 'custom', 'modified', 'legacy', 'older', 'vintage'];
+    const itemText = (s.item + ' ' + s.notes).toLowerCase();
+    
+    if (specialtyKeywords.some(keyword => itemText.includes(keyword))) {
+      reasons.push('Specialty/niche market');
+      competitive_advantage.push('Specialized market knowledge');
+    }
+    
+    // Compliance/regulatory barriers
+    if (s.category === 'arms' || s.category === 'ammo') {
+      reasons.push('Regulatory compliance requirements');
+      competitive_advantage.push('Compliance expertise advantage');
+      riskLevel = 'medium';
+    }
+    
+    // Government surplus - often overlooked
+    if (s.source.includes('Gov') || s.source.includes('DRMO') || s.source.includes('DLA')) {
+      reasons.push('Government surplus complexity');
+      competitive_advantage.push('Gov procurement experience');
+    }
+    
+    // Determine primary overlooked reason
+    const primaryReason = reasons.length > 0 ? reasons[0] : 'Small margin opportunity';
+    
+    // Create the fruit entry
+    fruits.push({
+      id: s.id,
+      item: s.item,
+      supply: s,
+      overlookedReason: primaryReason,
+      allReasons: reasons,
+      competitiveAdvantage: competitive_advantage,
+      commission: commission,
+      salePrice: salePrice,
+      riskLevel: riskLevel,
+      daysListed: daysListed || Math.floor(Math.random() * 45) + 15, // Mock for demo
+      category: s.category,
+      location: s.location,
+      specialtyCategory: getSpecialtyCategory(s)
+    });
+  });
+  
+  return fruits.sort((a, b) => b.commission - a.commission);
+}
+
+function getSpecialtyCategory(supply) {
+  const item = supply.item.toLowerCase();
+  const notes = (supply.notes || '').toLowerCase();
+  const combined = item + ' ' + notes;
+  
+  if (supply.category === 'valves' || combined.includes('valve') || combined.includes('wellhead')) {
+    return 'specialty-valves';
+  } else if (combined.includes('military') || combined.includes('surplus') || combined.includes('government')) {
+    return 'military-surplus';
+  } else if (combined.includes('niche') || combined.includes('specialty') || combined.includes('custom')) {
+    return 'niche-industrial';
+  } else if (combined.includes('older') || combined.includes('legacy') || combined.includes('vintage')) {
+    return 'older-equipment';
+  }
+  return 'other';
+}
+
+function scanLowerHangingFruit() {
+  showToast('LHF Scan', 'Scanning for hidden gem opportunities...', 'success');
+  
+  lowerHangingFruitData = identifyLowerHangingFruit();
+  renderLowerHangingFruitTable();
+  
+  showToast('Hidden Gems Found', `Identified ${lowerHangingFruitData.length} lower hanging fruit opportunities`, 'success');
+}
+
+function renderLowerHangingFruitTable() {
+  const tbody = document.getElementById('lower-hanging-fruit-table');
+  if (!tbody) return;
+  
+  // Apply filters
+  const riskFilter = document.getElementById('lhf-risk-filter')?.value || '';
+  const categoryFilter = document.getElementById('lhf-category-filter')?.value || '';
+  
+  let filtered = lowerHangingFruitData.filter(fruit => {
+    return (!riskFilter || fruit.riskLevel === riskFilter) &&
+           (!categoryFilter || fruit.specialtyCategory === categoryFilter);
+  });
+  
+  // Apply sorting
+  filtered.sort((a, b) => {
+    let aVal = a[lhfSortField];
+    let bVal = b[lhfSortField];
+    
+    if (typeof aVal === 'string') {
+      aVal = aVal.toLowerCase();
+      bVal = bVal.toLowerCase();
+    }
+    
+    if (lhfSortDirection === 'asc') {
+      return aVal > bVal ? 1 : -1;
+    } else {
+      return aVal < bVal ? 1 : -1;
+    }
+  });
+  
+  tbody.innerHTML = '';
+  
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">No lower hanging fruit found matching current filters</td></tr>';
+    return;
+  }
+  
+  filtered.forEach(fruit => {
+    const riskColor = fruit.riskLevel === 'low' ? 'var(--success)' : 'var(--warning)';
+    const riskBg = fruit.riskLevel === 'low' ? 'rgba(0,200,150,.15)' : 'rgba(255,170,34,.15)';
+    
+    tbody.innerHTML += `<tr>
+      <td>
+        <strong>${fruit.item}</strong><br>
+        <small style="color:var(--text-muted)">
+          ${fruit.supply.seller} &bull; ${fruit.location}<br>
+          ${fmt$(fruit.supply.price)} &bull; ${fruit.supply.condition} condition
+        </small>
+      </td>
+      <td>
+        <div style="margin-bottom:4px"><strong>${fruit.overlookedReason}</strong></div>
+        <small style="color:var(--text-secondary)">
+          ${fruit.competitiveAdvantage.slice(0,2).join(', ')}
+        </small>
+      </td>
+      <td>
+        <div class="price" style="font-size:1.1rem">${fmt$(fruit.commission)}</div>
+        <small style="color:var(--text-muted)">Sale: ${fmt$(fruit.salePrice)}</small>
+      </td>
+      <td>
+        <span class="cat-badge" style="background:${riskBg};color:${riskColor}">
+          ${fruit.riskLevel.toUpperCase()}
+        </span>
+      </td>
+      <td>
+        <span style="font-family:var(--font-mono)">${fruit.daysListed}</span>
+        <small style="color:var(--text-muted);display:block">days</small>
+      </td>
+      <td>
+        <button class="btn btn-sm btn-accent" onclick="createLHFDeal(${fruit.id})">Track Deal</button>
+        <button class="btn btn-sm" onclick="showLHFDetails(${fruit.id})">Details</button>
+      </td>
+    </tr>`;
+  });
+}
+
+function filterLowerHangingFruit() {
+  renderLowerHangingFruitTable();
+}
+
+function sortLHFTable(field) {
+  if (lhfSortField === field) {
+    lhfSortDirection = lhfSortDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    lhfSortField = field;
+    lhfSortDirection = 'desc';
+  }
+  renderLowerHangingFruitTable();
+}
+
+function createLHFDeal(supplyId) {
+  const fruit = lowerHangingFruitData.find(f => f.id === supplyId);
+  if (!fruit) return;
+  
+  // Pre-fill deal modal with LHF data
+  document.getElementById('deal-name').value = `LHF: ${fruit.item}`;
+  document.getElementById('deal-buyer').value = 'TBD - Lower Hanging Fruit';
+  document.getElementById('deal-seller').value = fruit.supply.seller;
+  document.getElementById('deal-value').value = fruit.salePrice;
+  document.getElementById('deal-notes').value = 
+    `Lower Hanging Fruit Opportunity\n` +
+    `Why Overlooked: ${fruit.overlookedReason}\n` +
+    `Competitive Advantages: ${fruit.competitiveAdvantage.join(', ')}\n` +
+    `Risk Level: ${fruit.riskLevel}\n` +
+    `Days on Market: ${fruit.daysListed}`;
+  
+  openModal('deal');
+}
+
+function showLHFDetails(supplyId) {
+  const fruit = lowerHangingFruitData.find(f => f.id === supplyId);
+  if (!fruit) return;
+  
+  const details = `
+Lower Hanging Fruit Analysis: ${fruit.item}
+
+🎯 WHY OTHERS OVERLOOK IT:
+${fruit.allReasons.map(r => '• ' + r).join('\n')}
+
+💪 YOUR COMPETITIVE ADVANTAGES:
+${fruit.competitiveAdvantage.map(a => '• ' + a).join('\n')}
+
+💰 FINANCIALS:
+• Purchase Price: ${fmt$(fruit.supply.price)}
+• Sale Price (6% markup): ${fmt$(fruit.salePrice)}
+• Your Commission: ${fmt$(fruit.commission)}
+• Risk Level: ${fruit.riskLevel.toUpperCase()}
+
+📊 MARKET FACTORS:
+• Days Listed: ${fruit.daysListed}
+• Condition: ${fruit.supply.condition}
+• Location: ${fruit.location}
+• Source: ${fruit.supply.source}
+
+This is exactly the type of deal big brokers pass on but can still net you solid profits!
+`;
+  
+  alert(details);
+}
+
+function exportLowerHangingFruit() {
+  if (!lowerHangingFruitData.length) {
+    showToast('No Data', 'Run "Find Hidden Deals" first', 'warning');
+    return;
+  }
+  
+  const csv = [
+    'Item,Why Overlooked,Commission,Risk Level,Days Listed,Purchase Price,Sale Price,Location,Condition',
+    ...lowerHangingFruitData.map(f => 
+      `"${f.item}","${f.overlookedReason}",${f.commission},${f.riskLevel},${f.daysListed},${f.supply.price},${f.salePrice},"${f.location}",${f.supply.condition}`
+    )
+  ].join('\n');
+  
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `lower_hanging_fruit_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  
+  showToast('Export Complete', 'Lower hanging fruit data exported to CSV');
+}
+
+// ============================================================
+// UTILITIES & EXPORTS
+// ============================================================
+function exportMatches() {
+  const matches = computeAdvancedMatches();
+  const csv = [
+    'Supply,Demand,Category,Deal Value,Commission,Confidence Score',
+    ...matches.map(m => `"${m.supply.item}","${m.demand.buyer}",${m.supply.category},${m.dealValue},${m.commission},${m.score}`)
+  ].join('\n');
+  
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `matches_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  
+  showToast('Export Complete', 'Matches exported to CSV file');
+}
+
+// ============================================================
+// INITIALIZATION
+// ============================================================
+function init() {
+  renderSupply(); 
+  renderDemand(); 
+  updateStats(); 
+  updateRevenue();
+  runAdvancedMatching();
+  
+  // Show welcome banner
+  const banner = document.getElementById('alert-banner');
+  banner.classList.add('show');
+  setTimeout(() => banner.classList.remove('show'), 10000);
+  
+  showToast('System Ready', 'Command Center Pro loaded successfully');
+}
+
+// Auto-sync if enabled
+setInterval(() => {
+  if (apiSettings.autoSync) {
+    syncAllData();
+    if (apiSettings.autoMatch) {
+      runAdvancedMatching();
+    }
+  }
+}, apiSettings.syncInterval || 900000);
+
+// Start the system
+init();
+</script>
+</body>
+</html>

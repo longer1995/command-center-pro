@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Longer Industries — Command Center</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-primary:#0a0e14;--bg-secondary:#111820;--bg-card:#161d27;--bg-hover:#1c2530;
+  --border:#253040;--border-light:#2a3a4a;
+  --text-primary:#e0e6ed;--text-secondary:#8899aa;--text-muted:#556677;
+  --accent:#00c896;--accent-dim:#00a87a;--accent-glow:rgba(0,200,150,.15);
+  --danger:#ff4466;--warning:#ffaa22;--info:#3399ff;
+  --high:#ff4466;--medium:#ffaa22;--low:#00c896;
+  --font-mono:'Courier New',Courier,monospace;
+  --font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --radius:6px;--shadow:0 2px 12px rgba(0,0,0,.4);
+}
+html{font-size:14px}
+body{font-family:var(--font-sans);background:var(--bg-primary);color:var(--text-primary);min-height:100vh;display:flex;overflow:hidden}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+button{cursor:pointer;font-family:inherit;font-size:.85rem}
+input,select,textarea{font-family:inherit;font-size:.85rem;background:var(--bg-secondary);color:var(--text-primary);border:1px solid var(--border);border-radius:var(--radius);padding:6px 10px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical}
+
+/* SIDEBAR */
+.sidebar{width:220px;background:var(--bg-secondary);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-brand{padding:20px 16px;border-bottom:1px solid var(--border);text-align:center}
+.sidebar-brand h1{font-size:1rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700}
+.sidebar-brand .sub{font-size:.7rem;color:var(--text-muted);letter-spacing:1px;margin-top:4px}
+.sidebar nav{flex:1;padding:12px 0}
+.sidebar nav button{display:flex;align-items:center;gap:10px;width:100%;padding:11px 20px;background:none;border:none;color:var(--text-secondary);font-size:.85rem;text-align:left;transition:all .15s}
+.sidebar nav button:hover{background:var(--bg-hover);color:var(--text-primary)}
+.sidebar nav button.active{background:var(--accent-glow);color:var(--accent);border-left:3px solid var(--accent)}
+.sidebar nav button .icon{font-size:1.1rem;width:22px;text-align:center}
+.sidebar-footer{padding:14px 16px;border-top:1px solid var(--border);font-size:.7rem;color:var(--text-muted);text-align:center}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--bg-secondary)}
+.topbar h2{font-size:1.05rem;font-weight:600}
+.topbar .meta{font-size:.75rem;color:var(--text-muted);font-family:var(--font-mono)}
+.content{flex:1;overflow-y:auto;padding:20px 24px}
+
+/* PANELS */
+.panel{display:none}.panel.active{display:block}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px}
+.stat-card:nth-child(1)::before{background:var(--accent)}
+.stat-card:nth-child(2)::before{background:var(--info)}
+.stat-card:nth-child(3)::before{background:var(--warning)}
+.stat-card:nth-child(4)::before{background:#00c896}
+.stat-card .label{font-size:.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px}
+.stat-card .value{font-size:1.8rem;font-weight:700;font-family:var(--font-mono)}
+.stat-card:nth-child(1) .value{color:var(--accent)}
+.stat-card:nth-child(2) .value{color:var(--info)}
+.stat-card:nth-child(3) .value{color:var(--warning)}
+.stat-card:nth-child(4) .value{color:#00c896}
+
+/* TABLE STYLES */
+.panel-section{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px;overflow:hidden}
+.panel-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
+.panel-header h3{font-size:.95rem;font-weight:600}
+.filters{display:flex;gap:8px;flex-wrap:wrap;padding:12px 18px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.15)}
+.filters select,.filters input{font-size:.78rem;padding:5px 8px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+thead{background:rgba(0,0,0,.2)}
+th{padding:10px 14px;text-align:left;font-weight:600;text-transform:uppercase;font-size:.7rem;letter-spacing:.5px;color:var(--text-muted);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:9px 14px;border-bottom:1px solid rgba(37,48,64,.5);vertical-align:top}
+tr:hover td{background:var(--bg-hover)}
+.cat-badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.cat-equipment{background:rgba(51,153,255,.15);color:#3399ff}
+.cat-machinery{background:rgba(255,170,34,.15);color:#ffaa22}
+.cat-arms{background:rgba(255,68,102,.15);color:#ff4466}
+.cat-ammo{background:rgba(200,100,255,.15);color:#c864ff}
+.price{font-family:var(--font-mono);color:var(--accent);font-weight:600}
+.btn{padding:6px 14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-secondary);color:var(--text-primary);transition:all .15s}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn-accent{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
+.btn-accent:hover{background:var(--accent-dim)}
+.btn-sm{padding:4px 10px;font-size:.75rem}
+.btn-danger{border-color:var(--danger);color:var(--danger)}
+.btn-danger:hover{background:var(--danger);color:#fff}
+
+/* MATCH ENGINE */
+.match-card{background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:16px}
+.match-side{font-size:.82rem}
+.match-side .title{font-weight:600;margin-bottom:4px}
+.match-side .detail{color:var(--text-secondary);font-size:.75rem}
+.match-arrow{font-size:1.5rem;color:var(--accent)}
+.match-numbers{text-align:right;font-family:var(--font-mono)}
+.match-numbers .deal{font-size:1.1rem;font-weight:700;color:var(--accent)}
+.match-numbers .commission{font-size:.8rem;color:var(--warning);margin-top:2px}
+.match-numbers .label{font-size:.65rem;color:var(--text-muted);text-transform:uppercase}
+
+/* DATA SOURCES */
+.sources-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.source-card{background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;align-items:flex-start;gap:14px;transition:border-color .15s}
+.source-card:hover{border-color:var(--accent)}
+.source-status{width:10px;height:10px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.source-status.online{background:#00c896;box-shadow:0 0 6px rgba(0,200,150,.5)}
+.source-status.manual{background:var(--warning);box-shadow:0 0 6px rgba(255,170,34,.4)}
+.source-info{flex:1}
+.source-info .name{font-weight:600;font-size:.9rem;margin-bottom:3px}
+.source-info .desc{font-size:.75rem;color:var(--text-secondary);margin-bottom:8px}
+.source-info .link{font-size:.78rem}
+
+/* KANBAN */
+.kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;min-height:500px}
+.kanban-col{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);display:flex;flex-direction:column}
+.kanban-col-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.kanban-col-header h4{font-size:.85rem;font-weight:600}
+.kanban-col-header .count{background:var(--bg-secondary);padding:2px 8px;border-radius:10px;font-size:.7rem;color:var(--text-muted);font-family:var(--font-mono)}
+.kanban-cards{flex:1;padding:10px;overflow-y:auto;min-height:100px}
+.kanban-card{background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px;cursor:grab;transition:border-color .15s}
+.kanban-card:hover{border-color:var(--accent)}
+.kanban-card.dragging{opacity:.5}
+.kanban-card .card-title{font-weight:600;font-size:.83rem;margin-bottom:4px}
+.kanban-card .card-desc{font-size:.73rem;color:var(--text-secondary);margin-bottom:8px}
+.kanban-card .card-meta{display:flex;align-items:center;justify-content:space-between}
+.kanban-card .priority{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 6px;border-radius:3px}
+.priority-high{background:rgba(255,68,102,.15);color:var(--high)}
+.priority-medium{background:rgba(255,170,34,.15);color:var(--medium)}
+.priority-low{background:rgba(0,200,150,.15);color:var(--low)}
+.kanban-card .card-date{font-size:.65rem;color:var(--text-muted);font-family:var(--font-mono)}
+.kanban-card .card-actions{display:flex;gap:4px;margin-top:8px}
+.kanban-card .card-actions button{padding:2px 6px;font-size:.65rem}
+
+/* ADD TASK */
+.add-task-form{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px}
+.add-task-form h3{font-size:.9rem;margin-bottom:12px}
+.form-row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.form-row input,.form-row select,.form-row textarea{flex:1;min-width:150px}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;width:500px;max-width:90vw;max-height:80vh;overflow-y:auto}
+.modal h3{margin-bottom:16px}
+.modal .form-group{margin-bottom:12px}
+.modal .form-group label{display:block;font-size:.75rem;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.modal .form-group input,.modal .form-group select,.modal .form-group textarea{width:100%}
+.modal .form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg-primary)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--border-light)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .sidebar{width:60px}.sidebar-brand h1{font-size:.6rem;letter-spacing:0}.sidebar-brand .sub{display:none}
+  .sidebar nav button span:not(.icon){display:none}.sidebar nav button{justify-content:center;padding:11px 0}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .kanban{grid-template-columns:1fr}
+  .match-card{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <h1>Longer Industries</h1>
+    <div class="sub">Command Center</div>
+  </div>
+  <nav>
+    <button class="active" data-panel="dashboard"><span class="icon">📊</span><span>Dashboard</span></button>
+    <button data-panel="supply"><span class="icon">📦</span><span>Supply</span></button>
+    <button data-panel="demand"><span class="icon">🎯</span><span>Demand</span></button>
+    <button data-panel="matches"><span class="icon">🔗</span><span>Matches</span></button>
+    <button data-panel="sources"><span class="icon">🌐</span><span>Sources</span></button>
+    <button data-panel="tasks"><span class="icon">📋</span><span>Tasks</span></button>
+  </nav>
+  <div class="sidebar-footer">v1.0 &bull; Houston, TX</div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+  <div class="topbar">
+    <h2 id="topbar-title">Dashboard</h2>
+    <div class="meta" id="clock"></div>
+  </div>
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="stats-row">
+        <div class="stat-card"><div class="label">Active Listings</div><div class="value" id="stat-supply">0</div></div>
+        <div class="stat-card"><div class="label">Active Buyers</div><div class="value" id="stat-demand">0</div></div>
+        <div class="stat-card"><div class="label">Potential Matches</div><div class="value" id="stat-matches">0</div></div>
+        <div class="stat-card"><div class="label">Potential Commission (6%)</div><div class="value" id="stat-commission">$0</div></div>
+      </div>
+      <div class="panel-section">
+        <div class="panel-header"><h3>Recent Supply Listings</h3></div>
+        <div class="table-wrap"><table><thead><tr><th>Item</th><th>Category</th><th>Price</th><th>Location</th><th>Date</th></tr></thead><tbody id="dash-supply"></tbody></table></div>
+      </div>
+      <div class="panel-section">
+        <div class="panel-header"><h3>Recent Buyer Requests</h3></div>
+        <div class="table-wrap"><table><thead><tr><th>Buyer</th><th>Need</th><th>Category</th><th>Budget</th><th>Date</th></tr></thead><tbody id="dash-demand"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- SUPPLY -->
+    <div class="panel" id="panel-supply">
+      <div class="panel-section">
+        <div class="panel-header"><h3>Supply — What's For Sale</h3><button class="btn btn-accent btn-sm" onclick="openModal('supply')">+ Add Listing</button></div>
+        <div class="filters">
+          <select id="supply-cat-filter"><option value="">All Categories</option><option value="equipment">Equipment</option><option value="machinery">Machinery</option><option value="arms">Arms</option><option value="ammo">Ammo</option></select>
+          <input type="number" id="supply-price-min" placeholder="Min Price" style="width:110px">
+          <input type="number" id="supply-price-max" placeholder="Max Price" style="width:110px">
+          <input type="text" id="supply-loc-filter" placeholder="Location...">
+          <button class="btn btn-sm" onclick="renderSupply()">Filter</button>
+          <button class="btn btn-sm" onclick="clearSupplyFilters()">Clear</button>
+        </div>
+        <div class="table-wrap"><table><thead><tr><th>Item</th><th>Category</th><th>Source</th><th>Seller</th><th>Make/Model</th><th>Price</th><th>Location</th><th>Date Listed</th><th>Link</th><th></th></tr></thead><tbody id="supply-table"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- DEMAND -->
+    <div class="panel" id="panel-demand">
+      <div class="panel-section">
+        <div class="panel-header"><h3>Demand — Who's Buying</h3><button class="btn btn-accent btn-sm" onclick="openModal('demand')">+ Add Buyer</button></div>
+        <div class="filters">
+          <select id="demand-cat-filter"><option value="">All Categories</option><option value="equipment">Equipment</option><option value="machinery">Machinery</option><option value="arms">Arms</option><option value="ammo">Ammo</option></select>
+          <input type="number" id="demand-budget-min" placeholder="Min Budget" style="width:110px">
+          <input type="number" id="demand-budget-max" placeholder="Max Budget" style="width:110px">
+          <input type="text" id="demand-loc-filter" placeholder="Location...">
+          <button class="btn btn-sm" onclick="renderDemand()">Filter</button>
+          <button class="btn btn-sm" onclick="clearDemandFilters()">Clear</button>
+        </div>
+        <div class="table-wrap"><table><thead><tr><th>Buyer</th><th>What They Need</th><th>Category</th><th>Budget</th><th>Location</th><th>Date Posted</th><th>Source</th><th>Link</th><th></th></tr></thead><tbody id="demand-table"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- MATCHES -->
+    <div class="panel" id="panel-matches">
+      <div class="panel-section">
+        <div class="panel-header"><h3>Match Engine — Potential Deals</h3><button class="btn btn-accent btn-sm" onclick="runMatchEngine()">⟳ Re-scan Matches</button></div>
+        <div style="padding:18px" id="matches-list"><p style="color:var(--text-muted)">Click "Re-scan Matches" to find potential deals...</p></div>
+      </div>
+    </div>
+
+    <!-- DATA SOURCES -->
+    <div class="panel" id="panel-sources">
+      <div class="panel-section">
+        <div class="panel-header"><h3>Data Sources</h3></div>
+        <div style="padding:18px"><div class="sources-grid" id="sources-grid"></div></div>
+      </div>
+    </div>
+
+    <!-- TASKS -->
+    <div class="panel" id="panel-tasks">
+      <div class="add-task-form">
+        <h3>Add New Task</h3>
+        <div class="form-row">
+          <input type="text" id="task-title" placeholder="Task title...">
+          <select id="task-priority"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select>
+          <button class="btn btn-accent" onclick="addTask()">Add Task</button>
+        </div>
+        <div class="form-row">
+          <textarea id="task-desc" placeholder="Description (optional)..." rows="2"></textarea>
+        </div>
+      </div>
+      <div class="kanban" id="kanban"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADD SUPPLY MODAL -->
+<div class="modal-overlay" id="modal-supply">
+  <div class="modal">
+    <h3>Add Supply Listing</h3>
+    <div class="form-group"><label>Item Name</label><input type="text" id="s-item"></div>
+    <div class="form-group"><label>Category</label><select id="s-cat"><option value="equipment">Equipment</option><option value="machinery">Machinery</option><option value="arms">Arms</option><option value="ammo">Ammo</option></select></div>
+    <div class="form-group"><label>Source</label><input type="text" id="s-source" placeholder="e.g. GovPlanet"></div>
+    <div class="form-group"><label>Seller</label><input type="text" id="s-seller"></div>
+    <div class="form-group"><label>Make / Model</label><input type="text" id="s-model"></div>
+    <div class="form-group"><label>Price ($)</label><input type="number" id="s-price"></div>
+    <div class="form-group"><label>Location</label><input type="text" id="s-location"></div>
+    <div class="form-group"><label>Link</label><input type="url" id="s-link" placeholder="https://..."></div>
+    <div class="form-actions">
+      <button class="btn" onclick="closeModal('supply')">Cancel</button>
+      <button class="btn btn-accent" onclick="addSupply()">Add Listing</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD DEMAND MODAL -->
+<div class="modal-overlay" id="modal-demand">
+  <div class="modal">
+    <h3>Add Buyer Request</h3>
+    <div class="form-group"><label>Buyer / Organization</label><input type="text" id="d-buyer"></div>
+    <div class="form-group"><label>What They Need</label><input type="text" id="d-need"></div>
+    <div class="form-group"><label>Category</label><select id="d-cat"><option value="equipment">Equipment</option><option value="machinery">Machinery</option><option value="arms">Arms</option><option value="ammo">Ammo</option></select></div>
+    <div class="form-group"><label>Budget ($)</label><input type="number" id="d-budget"></div>
+    <div class="form-group"><label>Location</label><input type="text" id="d-location"></div>
+    <div class="form-group"><label>Source</label><input type="text" id="d-source"></div>
+    <div class="form-group"><label>Link</label><input type="url" id="d-link" placeholder="https://..."></div>
+    <div class="form-actions">
+      <button class="btn" onclick="closeModal('demand')">Cancel</button>
+      <button class="btn btn-accent" onclick="addDemand()">Add Buyer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA LAYER
+// ============================================================
+const STORAGE_KEYS = { supply: 'li_supply', demand: 'li_demand', tasks: 'li_tasks' };
+
+const SAMPLE_SUPPLY = [
+  { id:1, item:"M35 2.5-Ton Cargo Truck", category:"equipment", source:"GovPlanet", seller:"DLA Disposition", model:"AM General M35A3", price:18500, location:"San Antonio, TX", date:"2026-03-08", link:"https://www.govplanet.com" },
+  { id:2, item:"CAT D6T Dozer", category:"machinery", source:"Ritchie Bros", seller:"JR Construction LLC", model:"Caterpillar D6T XL", price:142000, location:"Beaumont, TX", date:"2026-03-07", link:"https://www.rbauction.com" },
+  { id:3, item:"Pallet of 5.56 NATO (50,000 rds)", category:"ammo", source:"GunBroker", seller:"Patriot Surplus Co", model:"Lake City M855", price:22500, location:"Oklahoma City, OK", date:"2026-03-09", link:"https://www.gunbroker.com" },
+  { id:4, item:"Komatsu PC210 Excavator", category:"machinery", source:"IronPlanet", seller:"Lone Star Heavy Equip", model:"Komatsu PC210LC-11", price:97000, location:"Houston, TX", date:"2026-03-06", link:"https://www.ironplanet.com" },
+  { id:5, item:"Lot of 200 Beretta M9 Pistols", category:"arms", source:"DRMO", seller:"US Army TACOM", model:"Beretta M9", price:56000, location:"Anniston, AL", date:"2026-03-05", link:"https://www.dla.mil/DispositionServices/" },
+  { id:6, item:"John Deere 844K Wheel Loader", category:"machinery", source:"Purple Wave", seller:"Municipal Surplus", model:"John Deere 844K", price:85000, location:"Dallas, TX", date:"2026-03-04", link:"https://www.purplewave.com" },
+  { id:7, item:'7.62x51 NATO Ammo (100,000 rds)', category:"ammo", source:"ArmsList", seller:"Mil-Spec Trading", model:"FN SS109", price:48000, location:"Fayetteville, NC", date:"2026-03-03", link:"https://www.armslist.com" },
+  { id:8, item:"HMMWV M1151 Up-Armored", category:"equipment", source:"GovPlanet", seller:"DLA Disposition", model:"AM General M1151", price:42000, location:"Fort Hood, TX", date:"2026-03-02", link:"https://www.govplanet.com" },
+  { id:9, item:"Cameron Gate Valve 10\" 5000 PSI", category:"equipment", source:"Direct", seller:"Wellhead Surplus Inc", model:"Cameron FC 10-5M", price:28000, location:"Houston, TX", date:"2026-03-09", link:"#" },
+  { id:10, item:"Liebherr LTM 1100 Mobile Crane", category:"machinery", source:"Ritchie Bros", seller:"Gulf Crane Services", model:"Liebherr LTM 1100-4.2", price:310000, location:"Corpus Christi, TX", date:"2026-03-01", link:"https://www.rbauction.com" }
+];
+
+const SAMPLE_DEMAND = [
+  { id:1, buyer:"Pemex Procurement Div", need:"Heavy Excavators (3-5 units)", category:"machinery", budget:500000, location:"Tampico, MX", date:"2026-03-08", source:"Direct RFQ", link:"#" },
+  { id:2, buyer:"Colombian Ministry of Defense", need:"5.56 NATO Ammunition (500K rds)", category:"ammo", budget:250000, location:"Bogotá, CO", date:"2026-03-07", source:"FMS Lead", link:"#" },
+  { id:3, buyer:"Harris County Flood Control", need:"Dozers & Loaders (6 units)", category:"machinery", budget:600000, location:"Houston, TX", date:"2026-03-09", source:"SAM.gov", link:"https://sam.gov" },
+  { id:4, buyer:"Kurdistan Regional Govt", need:"Up-Armored Vehicles (10 units)", category:"equipment", budget:500000, location:"Erbil, IQ", date:"2026-03-06", source:"Broker Network", link:"#" },
+  { id:5, buyer:"Midland Basin Operator", need:"Severe Service Gate Valves (20 pcs)", category:"equipment", budget:400000, location:"Midland, TX", date:"2026-03-09", source:"Direct Inquiry", link:"#" },
+  { id:6, buyer:"Philippine National Police", need:"Sidearms (500 units)", category:"arms", budget:300000, location:"Manila, PH", date:"2026-03-05", source:"FMS Lead", link:"#" },
+  { id:7, buyer:"TxDOT District 12", need:"Wheel Loaders (4 units)", category:"machinery", budget:350000, location:"Houston, TX", date:"2026-03-04", source:"SAM.gov", link:"https://sam.gov" }
+];
+
+const SAMPLE_TASKS = [
+  { id:'t1', title:'Set up FFL/SOT renewal', desc:'Verify FFL Type 08 + SOT Class 02 status. Check renewal dates.', priority:'high', col:'backlog', created:'2026-03-09' },
+  { id:'t2', title:'Build GovPlanet scraper', desc:'Automated search alerts for surplus equipment auctions in TX/OK/LA.', priority:'medium', col:'backlog', created:'2026-03-09' },
+  { id:'t3', title:'Pemex excavator deal — LOI', desc:'Draft letter of intent for Komatsu PC210 lot to Pemex.', priority:'high', col:'inprogress', created:'2026-03-08' },
+  { id:'t4', title:'SAM.gov entity registration', desc:'Ensure Longer Industries is registered in SAM.gov for govt contracts.', priority:'high', col:'inprogress', created:'2026-03-08' },
+  { id:'t5', title:'Quote Harris County dozers', desc:'Pull pricing on D6T & 844K units, prepare quote at 6% markup.', priority:'medium', col:'inprogress', created:'2026-03-07' },
+  { id:'t6', title:'Set up command center repo', desc:'Initialize git repo for the deal brokerage dashboard.', priority:'low', col:'done', created:'2026-03-09' }
+];
+
+const DATA_SOURCES = [
+  { name:"SAM.gov", desc:"Federal contract opportunities & entity registration", url:"https://sam.gov/search/", status:"online" },
+  { name:"GovPlanet", desc:"Government surplus vehicles, equipment & auctions", url:"https://www.govplanet.com/", status:"online" },
+  { name:"IronPlanet", desc:"Used heavy equipment marketplace", url:"https://www.ironplanet.com/", status:"online" },
+  { name:"Ritchie Bros", desc:"Industrial equipment auctions worldwide", url:"https://www.rbauction.com/", status:"online" },
+  { name:"Purple Wave", desc:"Equipment auctions — no reserves", url:"https://www.purplewave.com/", status:"online" },
+  { name:"DLA Disposition Services", desc:"Military surplus & DRMO sales", url:"https://www.dla.mil/DispositionServices/", status:"manual" },
+  { name:"beta.SAM.gov (FBO)", desc:"Federal business opportunities portal", url:"https://sam.gov/content/opportunities", status:"online" },
+  { name:"GunBroker", desc:"Firearms, ammo & accessories marketplace", url:"https://www.gunbroker.com/", status:"online" },
+  { name:"ArmsList", desc:"Firearms & accessories classifieds", url:"https://www.armslist.com/", status:"manual" }
+];
+
+function loadData(key, fallback) {
+  try { const d = localStorage.getItem(STORAGE_KEYS[key]); return d ? JSON.parse(d) : [...fallback]; }
+  catch(e) { return [...fallback]; }
+}
+function saveData(key, data) { localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(data)); }
+
+let supplyData = loadData('supply', SAMPLE_SUPPLY);
+let demandData = loadData('demand', SAMPLE_DEMAND);
+let taskData = loadData('tasks', SAMPLE_TASKS);
+
+// Init sample data in storage if first load
+if (!localStorage.getItem(STORAGE_KEYS.supply)) saveData('supply', supplyData);
+if (!localStorage.getItem(STORAGE_KEYS.demand)) saveData('demand', demandData);
+if (!localStorage.getItem(STORAGE_KEYS.tasks)) saveData('tasks', taskData);
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+const panelTitles = { dashboard:'Dashboard', supply:'Supply — What\'s For Sale', demand:'Demand — Who\'s Buying', matches:'Match Engine', sources:'Data Sources', tasks:'Task Tracker' };
+
+document.querySelectorAll('.sidebar nav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sidebar nav button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const panel = btn.dataset.panel;
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + panel).classList.add('active');
+    document.getElementById('topbar-title').textContent = panelTitles[panel] || panel;
+  });
+});
+
+// ============================================================
+// CLOCK
+// ============================================================
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'}) + ' • ' + now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(updateClock, 1000); updateClock();
+
+// ============================================================
+// FORMAT HELPERS
+// ============================================================
+function fmt$(n) { return '$' + Number(n).toLocaleString('en-US'); }
+function catBadge(c) { return `<span class="cat-badge cat-${c}">${c}</span>`; }
+function nextId(arr) { return arr.length ? Math.max(...arr.map(x=>x.id)) + 1 : 1; }
+
+// ============================================================
+// DASHBOARD STATS
+// ============================================================
+function updateStats() {
+  document.getElementById('stat-supply').textContent = supplyData.length;
+  document.getElementById('stat-demand').textContent = demandData.length;
+  const matches = computeMatches();
+  document.getElementById('stat-matches').textContent = matches.length;
+  const totalCommission = matches.reduce((s,m) => s + m.commission, 0);
+  document.getElementById('stat-commission').textContent = fmt$(totalCommission);
+
+  // Recent supply
+  const ds = document.getElementById('dash-supply'); ds.innerHTML = '';
+  supplyData.slice(0,5).forEach(s => {
+    ds.innerHTML += `<tr><td>${s.item}</td><td>${catBadge(s.category)}</td><td class="price">${fmt$(s.price)}</td><td>${s.location}</td><td>${s.date}</td></tr>`;
+  });
+
+  // Recent demand
+  const dd = document.getElementById('dash-demand'); dd.innerHTML = '';
+  demandData.slice(0,5).forEach(d => {
+    dd.innerHTML += `<tr><td>${d.buyer}</td><td>${d.need}</td><td>${catBadge(d.category)}</td><td class="price">${d.budget ? fmt$(d.budget) : '—'}</td><td>${d.date}</td></tr>`;
+  });
+}
+
+// ============================================================
+// SUPPLY TABLE
+// ============================================================
+function renderSupply() {
+  const catF = document.getElementById('supply-cat-filter').value;
+  const minP = parseFloat(document.getElementById('supply-price-min').value) || 0;
+  const maxP = parseFloat(document.getElementById('supply-price-max').value) || Infinity;
+  const locF = document.getElementById('supply-loc-filter').value.toLowerCase();
+  const filtered = supplyData.filter(s =>
+    (!catF || s.category === catF) &&
+    s.price >= minP && s.price <= maxP &&
+    (!locF || s.location.toLowerCase().includes(locF))
+  );
+  const tb = document.getElementById('supply-table'); tb.innerHTML = '';
+  filtered.forEach(s => {
+    tb.innerHTML += `<tr>
+      <td><strong>${s.item}</strong></td><td>${catBadge(s.category)}</td><td>${s.source}</td><td>${s.seller}</td>
+      <td>${s.model}</td><td class="price">${fmt$(s.price)}</td><td>${s.location}</td><td>${s.date}</td>
+      <td>${s.link && s.link !== '#' ? `<a href="${s.link}" target="_blank">↗</a>` : '—'}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="deleteSupply(${s.id})">✕</button></td>
+    </tr>`;
+  });
+}
+function clearSupplyFilters() {
+  document.getElementById('supply-cat-filter').value = '';
+  document.getElementById('supply-price-min').value = '';
+  document.getElementById('supply-price-max').value = '';
+  document.getElementById('supply-loc-filter').value = '';
+  renderSupply();
+}
+function deleteSupply(id) {
+  supplyData = supplyData.filter(s => s.id !== id);
+  saveData('supply', supplyData); renderSupply(); updateStats();
+}
+
+// ============================================================
+// DEMAND TABLE
+// ============================================================
+function renderDemand() {
+  const catF = document.getElementById('demand-cat-filter').value;
+  const minB = parseFloat(document.getElementById('demand-budget-min').value) || 0;
+  const maxB = parseFloat(document.getElementById('demand-budget-max').value) || Infinity;
+  const locF = document.getElementById('demand-loc-filter').value.toLowerCase();
+  const filtered = demandData.filter(d =>
+    (!catF || d.category === catF) &&
+    (d.budget || 0) >= minB && (d.budget || Infinity) <= maxB &&
+    (!locF || d.location.toLowerCase().includes(locF))
+  );
+  const tb = document.getElementById('demand-table'); tb.innerHTML = '';
+  filtered.forEach(d => {
+    tb.innerHTML += `<tr>
+      <td><strong>${d.buyer}</strong></td><td>${d.need}</td><td>${catBadge(d.category)}</td>
+      <td class="price">${d.budget ? fmt$(d.budget) : '—'}</td><td>${d.location}</td><td>${d.date}</td>
+      <td>${d.source}</td><td>${d.link && d.link !== '#' ? `<a href="${d.link}" target="_blank">↗</a>` : '—'}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="deleteDemand(${d.id})">✕</button></td>
+    </tr>`;
+  });
+}
+function clearDemandFilters() {
+  document.getElementById('demand-cat-filter').value = '';
+  document.getElementById('demand-budget-min').value = '';
+  document.getElementById('demand-budget-max').value = '';
+  document.getElementById('demand-loc-filter').value = '';
+  renderDemand();
+}
+function deleteDemand(id) {
+  demandData = demandData.filter(d => d.id !== id);
+  saveData('demand', demandData); renderDemand(); updateStats();
+}
+
+// ============================================================
+// MATCH ENGINE
+// ============================================================
+function computeMatches() {
+  const matches = [];
+  supplyData.forEach(s => {
+    demandData.forEach(d => {
+      if (s.category !== d.category) return;
+      // Check keyword overlap
+      const sWords = (s.item + ' ' + s.model).toLowerCase().split(/\s+/);
+      const dWords = d.need.toLowerCase().split(/\s+/);
+      const overlap = sWords.filter(w => w.length > 3 && dWords.some(dw => dw.includes(w) || w.includes(dw)));
+      if (overlap.length === 0 && s.category !== d.category) return;
+      // Category match is enough for a potential match
+      const dealValue = s.price;
+      const markedUp = Math.round(s.price * 1.06);
+      const commission = Math.round(s.price * 0.06);
+      matches.push({ supply: s, demand: d, dealValue, markedUp, commission, relevance: overlap.length });
+    });
+  });
+  matches.sort((a,b) => b.commission - a.commission);
+  return matches;
+}
+
+function runMatchEngine() {
+  const matches = computeMatches();
+  const el = document.getElementById('matches-list');
+  if (!matches.length) { el.innerHTML = '<p style="color:var(--text-muted)">No matches found. Add more supply and demand listings.</p>'; return; }
+  el.innerHTML = '';
+  matches.forEach(m => {
+    el.innerHTML += `<div class="match-card">
+      <div class="match-side">
+        <div class="title">📦 ${m.supply.item}</div>
+        <div class="detail">${m.supply.seller} &bull; ${m.supply.location}<br>${catBadge(m.supply.category)} &bull; ${fmt$(m.supply.price)}</div>
+      </div>
+      <div class="match-arrow">⟶</div>
+      <div class="match-side">
+        <div class="title">🎯 ${m.demand.buyer}</div>
+        <div class="detail">Needs: ${m.demand.need}<br>${m.demand.location} &bull; Budget: ${m.demand.budget ? fmt$(m.demand.budget) : 'TBD'}</div>
+      </div>
+      <div class="match-numbers">
+        <div class="label">Sell Price (6% markup)</div>
+        <div class="deal">${fmt$(m.markedUp)}</div>
+        <div class="label" style="margin-top:6px">Your Commission</div>
+        <div class="commission">${fmt$(m.commission)}</div>
+      </div>
+    </div>`;
+  });
+  updateStats();
+}
+
+// ============================================================
+// DATA SOURCES
+// ============================================================
+function renderSources() {
+  const el = document.getElementById('sources-grid'); el.innerHTML = '';
+  DATA_SOURCES.forEach(s => {
+    el.innerHTML += `<div class="source-card">
+      <div class="source-status ${s.status}"></div>
+      <div class="source-info">
+        <div class="name">${s.name}</div>
+        <div class="desc">${s.desc}</div>
+        <div class="link"><a href="${s.url}" target="_blank">Browse / Search ↗</a></div>
+      </div>
+    </div>`;
+  });
+}
+
+// ============================================================
+// KANBAN TASK TRACKER
+// ============================================================
+const COLS = ['backlog','inprogress','done'];
+const COL_NAMES = { backlog:'Backlog', inprogress:'In Progress', done:'Done' };
+
+function renderKanban() {
+  const el = document.getElementById('kanban'); el.innerHTML = '';
+  COLS.forEach(col => {
+    const tasks = taskData.filter(t => t.col === col);
+    const moveOpts = COLS.filter(c => c !== col).map(c =>
+      `<button class="btn btn-sm" onclick="moveTask('${col}','__ID__','${c}')">${COL_NAMES[c]}</button>`
+    ).join('');
+    el.innerHTML += `<div class="kanban-col" data-col="${col}">
+      <div class="kanban-col-header"><h4>${COL_NAMES[col]}</h4><span class="count">${tasks.length}</span></div>
+      <div class="kanban-cards" data-col="${col}">
+        ${tasks.map(t => `<div class="kanban-card" draggable="true" data-id="${t.id}">
+          <div class="card-title">${t.title}</div>
+          ${t.desc ? `<div class="card-desc">${t.desc}</div>` : ''}
+          <div class="card-meta">
+            <span class="priority priority-${t.priority}">${t.priority}</span>
+            <span class="card-date">${t.created}</span>
+          </div>
+          <div class="card-actions">
+            ${COLS.filter(c => c !== col).map(c => `<button class="btn btn-sm" onclick="moveTask('${t.id}','${c}')">→ ${COL_NAMES[c]}</button>`).join('')}
+            <button class="btn btn-sm btn-danger" onclick="deleteTask('${t.id}')">✕</button>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  });
+  initDragDrop();
+}
+
+function addTask() {
+  const title = document.getElementById('task-title').value.trim();
+  if (!title) return;
+  const desc = document.getElementById('task-desc').value.trim();
+  const priority = document.getElementById('task-priority').value;
+  const now = new Date().toISOString().slice(0,10);
+  taskData.push({ id:'t'+Date.now(), title, desc, priority, col:'backlog', created:now });
+  saveData('tasks', taskData);
+  document.getElementById('task-title').value = '';
+  document.getElementById('task-desc').value = '';
+  renderKanban();
+}
+
+function moveTask(id, toCol) {
+  const t = taskData.find(x => x.id === id);
+  if (t) { t.col = toCol; saveData('tasks', taskData); renderKanban(); }
+}
+
+function deleteTask(id) {
+  taskData = taskData.filter(t => t.id !== id);
+  saveData('tasks', taskData); renderKanban();
+}
+
+// Drag & Drop
+function initDragDrop() {
+  document.querySelectorAll('.kanban-card').forEach(card => {
+    card.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', card.dataset.id); card.classList.add('dragging'); });
+    card.addEventListener('dragend', () => card.classList.remove('dragging'));
+  });
+  document.querySelectorAll('.kanban-cards').forEach(zone => {
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.background = 'var(--accent-glow)'; });
+    zone.addEventListener('dragleave', () => { zone.style.background = ''; });
+    zone.addEventListener('drop', e => {
+      e.preventDefault(); zone.style.background = '';
+      const id = e.dataTransfer.getData('text/plain');
+      const col = zone.dataset.col;
+      moveTask(id, col);
+    });
+  });
+}
+
+// ============================================================
+// MODALS
+// ============================================================
+function openModal(type) { document.getElementById('modal-' + type).classList.add('show'); }
+function closeModal(type) { document.getElementById('modal-' + type).classList.remove('show'); }
+
+function addSupply() {
+  const item = document.getElementById('s-item').value.trim();
+  if (!item) return;
+  supplyData.push({
+    id: nextId(supplyData), item,
+    category: document.getElementById('s-cat').value,
+    source: document.getElementById('s-source').value.trim() || 'Direct',
+    seller: document.getElementById('s-seller').value.trim() || '—',
+    model: document.getElementById('s-model').value.trim() || '—',
+    price: parseFloat(document.getElementById('s-price').value) || 0,
+    location: document.getElementById('s-location').value.trim() || '—',
+    date: new Date().toISOString().slice(0,10),
+    link: document.getElementById('s-link').value.trim() || '#'
+  });
+  saveData('supply', supplyData);
+  closeModal('supply'); renderSupply(); updateStats();
+  ['s-item','s-source','s-seller','s-model','s-price','s-location','s-link'].forEach(id => document.getElementById(id).value = '');
+}
+
+function addDemand() {
+  const buyer = document.getElementById('d-buyer').value.trim();
+  if (!buyer) return;
+  demandData.push({
+    id: nextId(demandData), buyer,
+    need: document.getElementById('d-need').value.trim() || '—',
+    category: document.getElementById('d-cat').value,
+    budget: parseFloat(document.getElementById('d-budget').value) || null,
+    location: document.getElementById('d-location').value.trim() || '—',
+    date: new Date().toISOString().slice(0,10),
+    source: document.getElementById('d-source').value.trim() || 'Direct',
+    link: document.getElementById('d-link').value.trim() || '#'
+  });
+  saveData('demand', demandData);
+  closeModal('demand'); renderDemand(); updateStats();
+  ['d-buyer','d-need','d-budget','d-location','d-source','d-link'].forEach(id => document.getElementById(id).value = '');
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(ov => {
+  ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('show'); });
+});
+
+// ============================================================
+// INIT
+// ============================================================
+renderSupply(); renderDemand(); renderSources(); renderKanban(); runMatchEngine(); updateStats();
+</script>
+</body>
+</html>
