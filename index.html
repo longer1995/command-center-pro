@@ -202,7 +202,7 @@ tr:hover td{background:var(--bg-hover)}
 </style>
 </head>
 <body>
-<script src="live-data-integration.js" defer></script>
+
 
 <!-- ALERT BANNER -->
 <div class="alert-banner" id="alert-banner">
@@ -848,10 +848,16 @@ let dealsData = loadData('deals', SAMPLE_DEALS);
 let apiSettings = loadData('apiSettings', { syncInterval: 900000, autoMatch: true });
 let syncHistory = loadData('syncHistory', []);
 
-// Initialize with sample data if first run
-if (!localStorage.getItem(STORAGE_KEYS.supply)) saveData('supply', supplyData);
-if (!localStorage.getItem(STORAGE_KEYS.demand)) saveData('demand', demandData);
-if (!localStorage.getItem(STORAGE_KEYS.deals)) saveData('deals', dealsData);
+// FORCE initialize with sample data (ensure it loads every time)
+saveData('supply', supplyData);
+saveData('demand', demandData);
+saveData('deals', dealsData);
+
+console.log('Data initialized:', {
+  supply: supplyData.length, 
+  demand: demandData.length, 
+  deals: dealsData.length
+});
 
 // ============================================================
 // ENHANCED MATCHING ALGORITHMS
