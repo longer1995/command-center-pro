@@ -1940,11 +1940,17 @@ function exportMatches() {
 // INITIALIZATION
 // ============================================================
 function init() {
-  renderSupply(); 
-  renderDemand(); 
-  updateStats(); 
-  updateRevenue();
-  runAdvancedMatching();
+  console.log('INIT: Starting with data:', {supply: supplyData.length, demand: demandData.length, deals: dealsData.length});
+  
+  // Force render everything
+  setTimeout(() => {
+    renderSupply(); 
+    renderDemand(); 
+    updateStats(); 
+    updateRevenue();
+    runAdvancedMatching();
+    console.log('INIT: Rendered all panels');
+  }, 100);
   
   // Show welcome banner
   const banner = document.getElementById('alert-banner');
