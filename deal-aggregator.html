@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deal Command Center - Brandon Longer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0e14;
+            color: #e0e6ed;
+            line-height: 1.6;
+        }
+        .header {
+            background: #111820;
+            border-bottom: 2px solid #00c896;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #00c896;
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            background: #161d27;
+        }
+        .stat-card {
+            background: #1c2530;
+            border: 1px solid #253040;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #00c896;
+        }
+        .stat-label {
+            color: #8899aa;
+            font-size: 0.9rem;
+        }
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            min-height: 70vh;
+        }
+        .panel {
+            background: #161d27;
+            border: 1px solid #253040;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .panel-header {
+            background: #1c2530;
+            border-bottom: 1px solid #253040;
+            padding: 16px;
+            font-weight: bold;
+            color: #00c896;
+        }
+        .panel-content {
+            padding: 16px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        .item {
+            background: #0a0e14;
+            border: 1px solid #253040;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        .item:hover {
+            border-color: #00c896;
+        }
+        .item-title {
+            font-weight: bold;
+            color: #e0e6ed;
+            margin-bottom: 4px;
+        }
+        .item-details {
+            font-size: 0.85rem;
+            color: #8899aa;
+        }
+        .item-price {
+            color: #00c896;
+            font-weight: bold;
+        }
+        .match {
+            background: #2d5a2d;
+            border: 1px solid #00c896;
+        }
+        .match-score {
+            background: #00c896;
+            color: #0a0e14;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            float: right;
+        }
+        .add-form {
+            background: #1c2530;
+            border: 1px solid #253040;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        input, select, textarea {
+            background: #0a0e14;
+            border: 1px solid #253040;
+            border-radius: 4px;
+            padding: 8px;
+            color: #e0e6ed;
+            font-size: 0.85rem;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #00c896;
+            outline: none;
+        }
+        button {
+            background: #00c896;
+            color: #0a0e14;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        button:hover {
+            background: #00a87a;
+        }
+        .delete-btn {
+            background: #ff4466;
+            color: white;
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            margin-left: 8px;
+        }
+        .controls {
+            background: #1c2530;
+            padding: 16px;
+            text-align: center;
+            border-top: 1px solid #253040;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚡ Deal Command Center</h1>
+        <div>Real-time Deal Aggregation & AI Matching</div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-number" id="supply-count">0</div>
+            <div class="stat-label">Available Supply</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="demand-count">0</div>
+            <div class="stat-label">Active Buyers</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="match-count">0</div>
+            <div class="stat-label">AI Matches</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="total-value">$0</div>
+            <div class="stat-label">Total Pipeline</div>
+        </div>
+    </div>
+
+    <div class="main">
+        <!-- SUPPLY PANEL -->
+        <div class="panel">
+            <div class="panel-header">📦 Supply Inventory</div>
+            <div class="panel-content">
+                <div class="add-form">
+                    <div class="form-row">
+                        <input type="text" id="supply-item" placeholder="Item/Equipment">
+                        <input type="text" id="supply-seller" placeholder="Seller">
+                    </div>
+                    <div class="form-row">
+                        <input type="number" id="supply-price" placeholder="Price">
+                        <input type="text" id="supply-location" placeholder="Location">
+                    </div>
+                    <div class="form-row">
+                        <select id="supply-category">
+                            <option value="equipment">Equipment</option>
+                            <option value="machinery">Machinery</option>
+                            <option value="valves">Valves</option>
+                            <option value="ammo">Ammunition</option>
+                            <option value="vehicles">Vehicles</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <button onclick="addSupply()">Add Supply</button>
+                    </div>
+                </div>
+                <div id="supply-list"></div>
+            </div>
+        </div>
+
+        <!-- DEMAND PANEL -->
+        <div class="panel">
+            <div class="panel-header">🎯 Active Buyers</div>
+            <div class="panel-content">
+                <div class="add-form">
+                    <div class="form-row">
+                        <input type="text" id="demand-buyer" placeholder="Buyer Name">
+                        <input type="text" id="demand-need" placeholder="What they need">
+                    </div>
+                    <div class="form-row">
+                        <input type="number" id="demand-budget" placeholder="Budget">
+                        <input type="text" id="demand-location" placeholder="Location">
+                    </div>
+                    <div class="form-row">
+                        <select id="demand-urgency">
+                            <option value="urgent">Urgent</option>
+                            <option value="normal">Normal</option>
+                            <option value="flexible">Flexible</option>
+                        </select>
+                        <button onclick="addDemand()">Add Buyer</button>
+                    </div>
+                </div>
+                <div id="demand-list"></div>
+            </div>
+        </div>
+
+        <!-- MATCHES PANEL -->
+        <div class="panel">
+            <div class="panel-header">🔥 AI Matches</div>
+            <div class="panel-content">
+                <div id="matches-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="runMatching()" style="background: #ff6b35; padding: 12px 24px;">🚀 RUN AI MATCHING</button>
+        <button onclick="clearAll()" style="background: #666; margin-left: 16px;">Clear All Data</button>
+        <button onclick="loadSampleData()" style="background: #3366ff; margin-left: 16px;">Load Sample Data</button>
+    </div>
+
+    <script>
+        // DATA STORAGE
+        let supplyData = JSON.parse(localStorage.getItem('dealSupply') || '[]');
+        let demandData = JSON.parse(localStorage.getItem('dealDemand') || '[]');
+        let currentMatches = [];
+
+        // CORE FUNCTIONS
+        function saveData() {
+            localStorage.setItem('dealSupply', JSON.stringify(supplyData));
+            localStorage.setItem('dealDemand', JSON.stringify(demandData));
+            updateStats();
+            render();
+        }
+
+        function addSupply() {
+            const item = document.getElementById('supply-item').value;
+            const seller = document.getElementById('supply-seller').value;
+            const price = parseInt(document.getElementById('supply-price').value) || 0;
+            const location = document.getElementById('supply-location').value;
+            const category = document.getElementById('supply-category').value;
+
+            if (!item || !seller) return alert('Please fill item and seller');
+
+            supplyData.push({
+                id: Date.now(),
+                item, seller, price, location, category,
+                created: new Date().toLocaleDateString()
+            });
+
+            // Clear form
+            document.getElementById('supply-item').value = '';
+            document.getElementById('supply-seller').value = '';
+            document.getElementById('supply-price').value = '';
+            document.getElementById('supply-location').value = '';
+            
+            saveData();
+        }
+
+        function addDemand() {
+            const buyer = document.getElementById('demand-buyer').value;
+            const need = document.getElementById('demand-need').value;
+            const budget = parseInt(document.getElementById('demand-budget').value) || 0;
+            const location = document.getElementById('demand-location').value;
+            const urgency = document.getElementById('demand-urgency').value;
+
+            if (!buyer || !need) return alert('Please fill buyer and need');
+
+            demandData.push({
+                id: Date.now(),
+                buyer, need, budget, location, urgency,
+                created: new Date().toLocaleDateString()
+            });
+
+            // Clear form
+            document.getElementById('demand-buyer').value = '';
+            document.getElementById('demand-need').value = '';
+            document.getElementById('demand-budget').value = '';
+            document.getElementById('demand-location').value = '';
+
+            saveData();
+        }
+
+        // AI MATCHING ALGORITHM
+        function runMatching() {
+            currentMatches = [];
+            
+            supplyData.forEach(supply => {
+                demandData.forEach(demand => {
+                    const score = calculateMatchScore(supply, demand);
+                    if (score > 30) { // Minimum threshold
+                        const commission = Math.round(supply.price * 0.06); // 6% commission
+                        currentMatches.push({
+                            supply, demand, score, commission,
+                            value: supply.price + commission
+                        });
+                    }
+                });
+            });
+
+            // Sort by score
+            currentMatches.sort((a, b) => b.score - a.score);
+            render();
+        }
+
+        function calculateMatchScore(supply, demand) {
+            let score = 0;
+
+            // Category/keyword matching
+            const supplyText = (supply.item + ' ' + supply.category).toLowerCase();
+            const demandText = demand.need.toLowerCase();
+            
+            // Exact keyword matches
+            const keywords = ['valve', 'excavator', 'dozer', 'truck', 'crane', 'ammo', 'equipment'];
+            keywords.forEach(keyword => {
+                if (supplyText.includes(keyword) && demandText.includes(keyword)) {
+                    score += 40;
+                }
+            });
+
+            // Partial text similarity
+            const supplyWords = supplyText.split(' ');
+            const demandWords = demandText.split(' ');
+            supplyWords.forEach(word => {
+                if (word.length > 3 && demandWords.some(dw => dw.includes(word))) {
+                    score += 10;
+                }
+            });
+
+            // Budget matching
+            if (demand.budget > 0 && supply.price > 0) {
+                const priceRatio = supply.price / demand.budget;
+                if (priceRatio <= 0.8) score += 30; // Under budget
+                else if (priceRatio <= 1.0) score += 20; // At budget
+                else if (priceRatio <= 1.2) score += 10; // Slightly over
+            }
+
+            // Location proximity
+            if (supply.location && demand.location) {
+                const sLoc = supply.location.toLowerCase();
+                const dLoc = demand.location.toLowerCase();
+                if (sLoc.includes(dLoc) || dLoc.includes(sLoc)) score += 15;
+            }
+
+            // Urgency bonus
+            if (demand.urgency === 'urgent') score += 10;
+
+            return Math.min(score, 100); // Cap at 100
+        }
+
+        // RENDERING
+        function render() {
+            renderSupply();
+            renderDemand();
+            renderMatches();
+        }
+
+        function renderSupply() {
+            const list = document.getElementById('supply-list');
+            list.innerHTML = '';
+            
+            supplyData.forEach(item => {
+                list.innerHTML += `
+                    <div class="item">
+                        <div class="item-title">${item.item}</div>
+                        <div class="item-details">
+                            ${item.seller} • <span class="item-price">$${item.price.toLocaleString()}</span><br>
+                            ${item.location} • ${item.category} • ${item.created}
+                            <button class="delete-btn" onclick="deleteSupply(${item.id})">✕</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderDemand() {
+            const list = document.getElementById('demand-list');
+            list.innerHTML = '';
+            
+            demandData.forEach(item => {
+                list.innerHTML += `
+                    <div class="item">
+                        <div class="item-title">${item.buyer}</div>
+                        <div class="item-details">
+                            Needs: ${item.need}<br>
+                            Budget: <span class="item-price">$${item.budget.toLocaleString()}</span> • ${item.location} • ${item.urgency}
+                            <button class="delete-btn" onclick="deleteDemand(${item.id})">✕</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderMatches() {
+            const list = document.getElementById('matches-list');
+            list.innerHTML = '';
+            
+            if (currentMatches.length === 0) {
+                list.innerHTML = '<div style="text-align:center;color:#8899aa;padding:20px;">Click "RUN AI MATCHING" to find deals</div>';
+                return;
+            }
+            
+            currentMatches.forEach(match => {
+                list.innerHTML += `
+                    <div class="item match">
+                        <div class="match-score">${match.score}%</div>
+                        <div class="item-title">${match.supply.item} → ${match.demand.buyer}</div>
+                        <div class="item-details">
+                            <strong>Supply:</strong> ${match.supply.seller} • $${match.supply.price.toLocaleString()}<br>
+                            <strong>Demand:</strong> ${match.demand.need}<br>
+                            <strong>Your Commission:</strong> <span class="item-price">$${match.commission.toLocaleString()}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('supply-count').textContent = supplyData.length;
+            document.getElementById('demand-count').textContent = demandData.length;
+            document.getElementById('match-count').textContent = currentMatches.length;
+            
+            const totalValue = currentMatches.reduce((sum, m) => sum + m.commission, 0);
+            document.getElementById('total-value').textContent = '$' + totalValue.toLocaleString();
+        }
+
+        // UTILITY FUNCTIONS
+        function deleteSupply(id) {
+            supplyData = supplyData.filter(item => item.id !== id);
+            saveData();
+        }
+
+        function deleteDemand(id) {
+            demandData = demandData.filter(item => item.id !== id);
+            saveData();
+        }
+
+        function clearAll() {
+            if (confirm('Clear all data?')) {
+                supplyData = [];
+                demandData = [];
+                currentMatches = [];
+                saveData();
+            }
+        }
+
+        function loadSampleData() {
+            supplyData = [
+                {id: 1, item: "CAT D6T Dozer", seller: "JR Construction", price: 142000, location: "Houston, TX", category: "machinery", created: "3/13/26"},
+                {id: 2, item: "Cameron Gate Valve 10\"", seller: "Wellhead Surplus", price: 28000, location: "Houston, TX", category: "valves", created: "3/13/26"},
+                {id: 3, item: "M35 Cargo Truck", seller: "DLA Disposition", price: 18500, location: "San Antonio, TX", category: "vehicles", created: "3/13/26"}
+            ];
+            
+            demandData = [
+                {id: 1, buyer: "Harris County Flood Control", need: "Dozers and Loaders", budget: 600000, location: "Houston, TX", urgency: "urgent", created: "3/13/26"},
+                {id: 2, buyer: "Midland Basin Operator", need: "Severe Service Gate Valves", budget: 400000, location: "Midland, TX", urgency: "urgent", created: "3/13/26"},
+                {id: 3, buyer: "Colombian Defense Ministry", need: "Military Vehicles", budget: 500000, location: "Bogotá, CO", urgency: "normal", created: "3/13/26"}
+            ];
+            
+            saveData();
+            runMatching();
+        }
+
+        // INITIALIZE
+        document.addEventListener('DOMContentLoaded', function() {
+            render();
+            updateStats();
+            if (supplyData.length === 0 && demandData.length === 0) {
+                loadSampleData();
+            }
+        });
+    </script>
+</body>
+</html>
