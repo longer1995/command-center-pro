@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brandon Longer - Executive Resume</title>
+    <style>
+        @page {
+            margin: 0.5in;
+            size: letter;
+        }
+        
+        body {
+            font-family: 'Calibri', 'Arial', sans-serif;
+            line-height: 1.4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            font-size: 11pt;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #1f4788;
+            padding-bottom: 15pt;
+            margin-bottom: 20pt;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 28pt;
+            font-weight: bold;
+            color: #1f4788;
+            letter-spacing: 2pt;
+            text-transform: uppercase;
+        }
+        
+        .header .contact {
+            margin-top: 10pt;
+            font-size: 11pt;
+            color: #555;
+            line-height: 1.3;
+        }
+        
+        .contact-line {
+            margin: 2pt 0;
+        }
+        
+        .section {
+            margin-bottom: 18pt;
+            page-break-inside: avoid;
+        }
+        
+        .section h2 {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #1f4788;
+            text-transform: uppercase;
+            letter-spacing: 1pt;
+            border-bottom: 2px solid #1f4788;
+            padding-bottom: 4pt;
+            margin-bottom: 12pt;
+            margin-top: 0;
+        }
+        
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 3pt;
+        }
+        
+        .job-title {
+            font-weight: bold;
+            font-size: 12pt;
+            color: #1f4788;
+        }
+        
+        .job-dates {
+            font-size: 10pt;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .company-info {
+            font-size: 11pt;
+            color: #666;
+            margin-bottom: 8pt;
+            font-weight: 500;
+        }
+        
+        .job-content {
+            margin-bottom: 15pt;
+            page-break-inside: avoid;
+        }
+        
+        .job-content ul {
+            margin: 6pt 0;
+            padding-left: 20pt;
+        }
+        
+        .job-content li {
+            margin-bottom: 4pt;
+            line-height: 1.35;
+            text-align: justify;
+        }
+        
+        .summary-text {
+            text-align: justify;
+            margin-bottom: 12pt;
+            line-height: 1.45;
+            font-size: 11.5pt;
+        }
+        
+        .competencies {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20pt;
+            margin-bottom: 12pt;
+        }
+        
+        .competency-category h4 {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #1f4788;
+            margin-bottom: 6pt;
+            margin-top: 0;
+            text-decoration: underline;
+        }
+        
+        .competency-category ul {
+            margin: 0;
+            padding-left: 18pt;
+            list-style-type: disc;
+        }
+        
+        .competency-category li {
+            margin-bottom: 3pt;
+            font-size: 10pt;
+            line-height: 1.3;
+        }
+        
+        .achievements-box {
+            background: linear-gradient(135deg, #f8f9fb 0%, #e8eaf2 100%);
+            padding: 12pt;
+            border-left: 6px solid #1f4788;
+            border-radius: 4pt;
+            margin: 12pt 0;
+            page-break-inside: avoid;
+        }
+        
+        .achievements-box h3 {
+            margin-top: 0;
+            margin-bottom: 8pt;
+            color: #1f4788;
+            font-size: 12pt;
+            font-weight: bold;
+        }
+        
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6pt;
+        }
+        
+        .achievements-grid li {
+            font-size: 10pt;
+            line-height: 1.3;
+            margin-bottom: 3pt;
+        }
+        
+        .technical-skills {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15pt;
+            margin-top: 10pt;
+        }
+        
+        .skill-category h4 {
+            font-size: 10pt;
+            font-weight: bold;
+            color: #1f4788;
+            margin-bottom: 5pt;
+            margin-top: 0;
+            text-decoration: underline;
+        }
+        
+        .skill-category p {
+            font-size: 9pt;
+            line-height: 1.25;
+            margin: 0;
+            text-align: justify;
+        }
+        
+        .education-section {
+            background: #fafbfc;
+            padding: 10pt;
+            border-radius: 4pt;
+            border: 1px solid #e1e4e8;
+        }
+        
+        .education-note {
+            font-style: italic;
+            color: #666;
+            text-align: center;
+            margin-top: 10pt;
+            font-size: 9pt;
+        }
+        
+        .highlight {
+            font-weight: bold;
+            color: #1f4788;
+        }
+        
+        .print-button {
+            text-align: center;
+            margin: 15pt 0;
+            padding: 10pt;
+            background: #f0f4f8;
+            border-radius: 6pt;
+        }
+        
+        .print-button button {
+            background: #1f4788;
+            color: white;
+            border: none;
+            padding: 8pt 16pt;
+            margin: 3pt;
+            border-radius: 4pt;
+            font-size: 10pt;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        @media print {
+            .print-button {
+                display: none;
+            }
+            
+            body {
+                font-size: 10pt;
+            }
+            
+            .header h1 {
+                font-size: 24pt;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="print-button">
+        <button onclick="window.print()">🖨️ Print to PDF</button>
+        <button onclick="downloadPDF()">📄 Save as PDF</button>
+    </div>
+
+    <div class="header">
+        <h1>Brandon Longer</h1>
+        <div class="contact">
+            <div class="contact-line"><strong>7418 Janak Dr, Houston, TX 77055</strong></div>
+            <div class="contact-line"><strong>713-855-8055</strong> | longerindustrial@gmail.com</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Executive Summary</h2>
+        <div class="summary-text">
+            <strong>Senior Operations Executive and Proven Entrepreneur</strong> with 10+ years building and scaling defense manufacturing, international trade, and industrial operations. Founded and operated ammunition companies generating <span class="highlight">$1.8M annual revenue</span> while raising <span class="highlight">$3.1M in institutional capital</span>. Served as Executive Vice President at severe service valve manufacturer, establishing complete manufacturing and assembly operations from ground up. Extensive expertise in P&L management, international business development, regulatory compliance (ITAR/ATF), government procurement, and manufacturing scale-up across defense and industrial sectors.
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Core Competencies</h2>
+        <div class="competencies">
+            <div class="competency-category">
+                <h4>Strategic Leadership</h4>
+                <ul>
+                    <li>P&L Management & Financial Oversight</li>
+                    <li>Manufacturing Operations & Scale-Up</li>
+                    <li>Cross-Functional Team Leadership</li>
+                    <li>Regulatory Compliance & Risk Management</li>
+                    <li>Operational Excellence Implementation</li>
+                </ul>
+            </div>
+            <div class="competency-category">
+                <h4>Business Development</h4>
+                <ul>
+                    <li>International Trade & Market Entry</li>
+                    <li>Capital Raising & Investor Relations</li>
+                    <li>Government Procurement & Contracting</li>
+                    <li>Strategic Partnership Development</li>
+                    <li>Complex Deal Structuring</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Professional Experience</h2>
+
+        <div class="job-content">
+            <div class="job-header">
+                <div class="job-title">EXECUTIVE VICE PRESIDENT</div>
+                <div class="job-dates">June 2025 – March 2026</div>
+            </div>
+            <div class="company-info">Vestra Valve | Houston, TX</div>
+            <ul>
+                <li>Recruited to establish complete manufacturing and assembly operations for severe service valve manufacturer specializing in oil & gas, petrochemical, and power generation applications</li>
+                <li><span class="highlight">Built manufacturing operations from ground up</span>, including facility design, equipment procurement, workforce development, and comprehensive production system implementation</li>
+                <li><span class="highlight">Established assembly line operations</span> for high-specification valve products requiring precise manufacturing tolerances and rigorous quality control standards</li>
+                <li><span class="highlight">Led cross-functional teams</span> across engineering, manufacturing, quality assurance, and supply chain, ensuring operational excellence and full regulatory compliance</li>
+            </ul>
+        </div>
+
+        <div class="job-content">
+            <div class="job-header">
+                <div class="job-title">FOUNDER & PRESIDENT</div>
+                <div class="job-dates">December 2020 – Present</div>
+            </div>
+            <div class="company-info">Ammunation (Import/Distribution) | Texas</div>
+            <ul>
+                <li>Founded ammunition import and distribution company to serve wholesale and retail markets across North America</li>
+                <li><span class="highlight">Raised $3M in institutional capital</span> to fund inventory acquisition, warehouse facilities, and comprehensive distribution infrastructure</li>
+                <li><span class="highlight">Generated $1.8M annual revenue</span> through strategic wholesale operations and highly efficient distribution model</li>
+                <li><span class="highlight">Built extensive distribution network</span> serving large number of distributors and drop-ship partners, establishing comprehensive national market coverage</li>
+                <li><span class="highlight">Developed international import/export operations</span> with global suppliers while maintaining full ITAR and ATF regulatory compliance</li>
+                <li><span class="highlight">Stepped away from daily operations in June 2025</span> to pursue executive role while maintaining ownership stake and strategic oversight</li>
+            </ul>
+        </div>
+
+        <div class="job-content">
+            <div class="job-header">
+                <div class="job-title">CO-FOUNDER & PRESIDENT</div>
+                <div class="job-dates">February 2018 – December 2020</div>
+            </div>
+            <div class="company-info">American Munitions (Manufacturing) | Texas</div>
+            <ul>
+                <li>Co-founded ammunition manufacturing company specializing in domestic production for civilian and government markets</li>
+                <li><span class="highlight">Established complete manufacturing operations</span> including production line setup, quality control systems, and comprehensive regulatory compliance frameworks</li>
+                <li><span class="highlight">Developed government procurement capabilities</span> and secured federal contracting certifications for defense sector sales</li>
+                <li><span class="highlight">Built high-volume production capacity</span> to manufacture large-scale ammunition orders while maintaining stringent quality standards</li>
+                <li><span class="highlight">Successfully transitioned to import/distribution model</span> (Ammunation) to better serve market demand for diverse product offerings and scale operations</li>
+            </ul>
+        </div>
+
+        <div class="job-content">
+            <div class="job-header">
+                <div class="job-title">BUSINESS DEVELOPMENT ASSOCIATE</div>
+                <div class="job-dates">June 2015 – December 2017</div>
+            </div>
+            <div class="company-info">Seated App | Boston, MA</div>
+            <ul>
+                <li>Contributed to fundraising efforts for restaurant reservation and dining rewards platform startup</li>
+                <li><span class="highlight">Participated in $12M Series A fundraising round</span>, personally raising $100K through strategic investor relationship development</li>
+                <li><span class="highlight">Developed business development strategies</span> for restaurant partnership acquisition and user growth initiatives across multiple metropolitan markets</li>
+                <li><span class="highlight">Left college sophomore year</span> to accept full-time position based on exceptional internship performance and demonstrated business development capabilities</li>
+            </ul>
+        </div>
+
+        <div class="job-content">
+            <div class="job-header">
+                <div class="job-title">CO-FOUNDER & OPERATIONS DIRECTOR</div>
+                <div class="job-dates">2023 – Present</div>
+            </div>
+            <div class="company-info">GCDL Defense | Montana/Texas</div>
+            <ul>
+                <li>Co-founded conventional ordnance company focused on manufacturing, assembly, and international sales of defense products</li>
+                <li><span class="highlight">Structured complex international defense transactions</span> involving multi-party stakeholders, ITAR compliance, export controls, and cross-border logistics coordination</li>
+                <li><span class="highlight">Built international business development pipelines</span> across Eastern Europe, South Asia, and South America, establishing strategic market presence</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="achievements-box">
+        <h3>Key Achievements</h3>
+        <ul class="achievements-grid">
+            <li><span class="highlight">$3.1M Total Capital Raised</span> across multiple ventures and funding rounds</li>
+            <li><span class="highlight">$1.8M Annual Revenue Generation</span> through effective operations and business development</li>
+            <li><span class="highlight">Federal Contracting Expertise</span> including government procurement and regulatory compliance</li>
+            <li><span class="highlight">International Trade Operations</span> across Europe, Asia, and South America with ITAR/export control navigation</li>
+            <li><span class="highlight">Manufacturing Scale-Up</span> from startup to high-volume production in regulated industries</li>
+            <li><span class="highlight">Team Leadership</span> across engineering, manufacturing, compliance, and business development functions</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Technical Competencies</h2>
+        <div class="technical-skills">
+            <div class="skill-category">
+                <h4>Regulatory & Compliance</h4>
+                <p>ATF Federal Firearms License (FFL), ITAR Compliance & Export Controls, ISO 9001 Quality Systems, Federal Acquisition Regulations (FAR), Six Sigma Methodologies</p>
+            </div>
+            <div class="skill-category">
+                <h4>Manufacturing & Operations</h4>
+                <p>Lean Manufacturing Principles, Supply Chain Optimization, Quality Control Systems, Production Planning & Scheduling, Facility Design & Implementation</p>
+            </div>
+            <div class="skill-category">
+                <h4>Financial & Strategic</h4>
+                <p>P&L Management, Financial Modeling & Analysis, Investor Relations, Strategic Planning, Risk Assessment & Mitigation, Capital Markets Navigation</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Education & Training</h2>
+        <div class="education-section">
+            <p><span class="highlight">Business Development & Operations Experience</span> | Self-Directed Learning<br>
+            <em>Equivalent to Bachelor's degree through extensive practical application in manufacturing, regulatory compliance, and business development</em></p>
+            
+            <p style="margin-top: 8pt;"><span class="highlight">Specialized Training:</span> ITAR Compliance, ATF Regulations, Federal Contracting, International Trade, Manufacturing Operations, Quality Management Systems</p>
+        </div>
+        
+        <div class="education-note">
+            <em>References and detailed project portfolios available upon request</em>
+        </div>
+    </div>
+
+    <script>
+        function downloadPDF() {
+            window.print();
+        }
+    </script>
+</body>
+</html>

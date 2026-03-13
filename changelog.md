@@ -1,5 +1,18 @@
 # Command Center Pro - Changelog
 
+**Version 2.1 Pro** - March 13, 2026
+
+## 🚀 New Features
+
+### 📅 Weekend Deal Alert System
+- **Smart Detection**: Automatically identifies weekend opportunities when accessing on Friday/Saturday/Sunday
+- **Urgent Deal Tracking**: Highlights deals closing within 7 days  
+- **High-Confidence Match Alerts**: Surfaces matches with 80%+ confidence for weekend follow-up
+- **Quick Navigation**: One-click access to relevant deals and matches from alert
+- **Dismissible Interface**: Clean, non-intrusive alert design with gradient styling
+
+---
+
 **Version 2.0 Pro** - March 11, 2026
 
 ## 🚀 Major Features Added

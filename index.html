@@ -1941,6 +1941,27 @@ function init() {
   setTimeout(() => checkWeekendAlerts(), 2000); // Delay to let everything load
   
   showToast('System Ready', 'Command Center Pro loaded successfully');
+  
+  // Add last update timestamp display
+  const updateTimestamp = () => {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-US', { 
+      hour12: true, 
+      hour: 'numeric', 
+      minute: '2-digit',
+      timeZoneName: 'short'
+    });
+    const existingTimestamp = document.querySelector('.last-update-time');
+    if (existingTimestamp) {
+      existingTimestamp.textContent = `Last updated: ${timeStr}`;
+    } else {
+      const header = document.querySelector('.panel-header h3');
+      if (header && header.textContent.includes('14-Day Revenue')) {
+        header.innerHTML += ` <span class="last-update-time" style="font-size:0.7rem;color:var(--text-muted);font-weight:400;">Last updated: ${timeStr}</span>`;
+      }
+    }
+  };
+  updateTimestamp();
 }
 
 // HOURLY UPDATES - Critical 14-day window
@@ -1949,6 +1970,7 @@ setInterval(() => {
   updateRevenue();
   runAdvancedMatching();
   checkWeekendAlerts();
+  updateTimestamp(); // Show when last updated
   
   // Flash revenue progress during business hours
   const now = new Date();
@@ -1959,6 +1981,7 @@ setInterval(() => {
       progress.style.animation = 'pulse 0.5s ease-in-out';
       setTimeout(() => progress.style.animation = '', 500);
     }
+    showToast('Hourly Update', 'Revenue tracking refreshed', 2000);
   }
 }, 60 * 60 * 1000); // Update every hour
 
