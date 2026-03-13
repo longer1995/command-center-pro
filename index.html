@@ -190,9 +190,19 @@ tr:hover td{background:var(--bg-hover)}
 .toast .toast-content{flex:1}
 .toast .toast-title{font-weight:600;font-size:.85rem;margin-bottom:2px}
 .toast .toast-message{font-size:.75rem;color:var(--text-secondary)}
+
+/* WEEKEND ALERT */
+.weekend-alert{position:fixed;top:80px;right:20px;z-index:1500;max-width:320px;background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-secondary) 100%);border:2px solid var(--accent);border-radius:var(--radius);box-shadow:0 8px 32px rgba(0,200,150,.2);animation:slideInRight .3s ease}
+.weekend-alert-content{padding:16px}
+.weekend-alert h3{color:var(--accent);margin-bottom:8px;font-size:.9rem;display:flex;align-items:center;gap:6px}
+.weekend-alert p{font-size:.8rem;color:var(--text-primary);margin-bottom:4px}
+.weekend-alert-actions{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.weekend-alert-actions .btn{font-size:.75rem;padding:4px 8px}
+@keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
 </style>
 </head>
 <body>
+<script src="live-data-integration.js" defer></script>
 
 <!-- ALERT BANNER -->
 <div class="alert-banner" id="alert-banner">
@@ -1404,6 +1414,54 @@ function renderDealsTable() {
 }
 
 // ============================================================
+// WEEKEND ALERT SYSTEM
+// ============================================================
+function checkWeekendAlerts() {
+  const now = new Date();
+  const isWeekend = now.getDay() === 0 || now.getDay() === 6; // Sunday = 0, Saturday = 6
+  const isFriday = now.getDay() === 5;
+  
+  if (isWeekend || isFriday) {
+    const urgentDeals = dealsData.filter(d => 
+      d.stage !== 'closed-won' && d.stage !== 'closed-lost' &&
+      (d.closeDate && new Date(d.closeDate) <= new Date(Date.now() + 7*24*60*60*1000)) // Within next 7 days
+    );
+    
+    const urgentMatches = matchesData.filter(m => m.confidence >= 80);
+    
+    if (urgentDeals.length > 0 || urgentMatches.length > 0) {
+      showWeekendAlert(urgentDeals.length, urgentMatches.length);
+    }
+  }
+}
+
+function showWeekendAlert(dealCount, matchCount) {
+  const alertHtml = `
+    <div class="weekend-alert" id="weekend-alert">
+      <div class="weekend-alert-content">
+        <h3>🚨 Weekend Opportunities</h3>
+        <p><strong>${dealCount}</strong> deals closing within 7 days</p>
+        <p><strong>${matchCount}</strong> high-confidence matches ready</p>
+        <div class="weekend-alert-actions">
+          <button onclick="navigateTo('deals')" class="btn btn-sm">View Deals</button>
+          <button onclick="navigateTo('matches')" class="btn btn-sm">View Matches</button>
+          <button onclick="dismissWeekendAlert()" class="btn btn-sm btn-secondary">Dismiss</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  if (!document.getElementById('weekend-alert')) {
+    document.body.insertAdjacentHTML('beforeend', alertHtml);
+  }
+}
+
+function dismissWeekendAlert() {
+  const alert = document.getElementById('weekend-alert');
+  if (alert) alert.remove();
+}
+
+// ============================================================
 // MODAL OPERATIONS
 // ============================================================
 function openModal(type) { document.getElementById('modal-' + type).classList.add('show'); }
@@ -1879,8 +1937,30 @@ function init() {
   banner.classList.add('show');
   setTimeout(() => banner.classList.remove('show'), 10000);
   
+  // Check for weekend opportunities
+  setTimeout(() => checkWeekendAlerts(), 2000); // Delay to let everything load
+  
   showToast('System Ready', 'Command Center Pro loaded successfully');
 }
+
+// HOURLY UPDATES - Critical 14-day window
+setInterval(() => {
+  updateStats(); 
+  updateRevenue();
+  runAdvancedMatching();
+  checkWeekendAlerts();
+  
+  // Flash revenue progress during business hours
+  const now = new Date();
+  const hour = now.getHours();
+  if (hour >= 8 && hour <= 22) {
+    const progress = document.querySelector('.progress-value');
+    if (progress) {
+      progress.style.animation = 'pulse 0.5s ease-in-out';
+      setTimeout(() => progress.style.animation = '', 500);
+    }
+  }
+}, 60 * 60 * 1000); // Update every hour
 
 // Auto-sync if enabled
 setInterval(() => {
@@ -1891,6 +1971,40 @@ setInterval(() => {
     }
   }
 }, apiSettings.syncInterval || 900000);
+
+// Daily activity tracker
+function trackDailyActivity() {
+  const today = new Date().toISOString().slice(0,10);
+  let activity = JSON.parse(localStorage.getItem('dailyActivity') || '{}');
+  
+  if (!activity[today]) {
+    activity[today] = {
+      logins: 0,
+      matchesFound: 0,
+      dealsCreated: 0,
+      revenueGenerated: 0,
+      lastActivity: Date.now()
+    };
+  }
+  
+  activity[today].logins++;
+  activity[today].lastActivity = Date.now();
+  
+  // Keep only last 30 days
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  Object.keys(activity).forEach(date => {
+    if (new Date(date) < thirtyDaysAgo) {
+      delete activity[date];
+    }
+  });
+  
+  localStorage.setItem('dailyActivity', JSON.stringify(activity));
+  return activity[today];
+}
+
+// Track login activity
+const todayActivity = trackDailyActivity();
 
 // Start the system
 init();
